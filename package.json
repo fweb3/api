@@ -7,7 +7,7 @@
     "build": "tsc -p tsconfig-build.json",
     "clean": "rm -rf dist && npm run build",
     "start": "node ./dist/app.js",
-    "dev": "ts-node server/app.ts",
+    "dev": "ts-node -r dotenv/config server/app.ts",
     "test": "jest",
     "test:ci": "jest",
     "test:watch": "jest --watchAll"

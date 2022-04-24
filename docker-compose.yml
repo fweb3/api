@@ -9,4 +9,4 @@ services:
     volumes:
         - .:/app
     environment:
-      - PORT:3000
+      - PORT=3000
