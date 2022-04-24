@@ -4,9 +4,10 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "build": "tsc",
-    "start": "tsc & node .",
-    "dev": "tsc -w & nodemon .",
+    "build": "tsc -p tsconfig-build.json",
+    "clean": "rm -rf dist && npm run build",
+    "start": "ts-node dist/app.js",
+    "dev": "ts-node server/app.ts",
     "test": "jest",
     "test:watch": "jest --watchAll"
   },
