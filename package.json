@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig-build.json",
     "clean": "rm -rf dist && npm run build",
-    "start": "ts-node dist/app.js",
+    "start": "node dist/app.js",
     "dev": "ts-node server/app.ts",
     "test": "jest",
     "test:ci": "jest",
