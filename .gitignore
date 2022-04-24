@@ -3,5 +3,3 @@ node_modules
 .env
 tmp
 .DS_Store
-dist
-build
