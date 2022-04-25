@@ -3,14 +3,16 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "target": "es6",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
+    "resolveJsonModule": true,
     "paths": {
       "*": ["node_modules/*"]
     }
   },
-  "include": ["server/**/*", "bots/**/*"]
+  "include": ["server/**/*", "bots/**/*", "tmp/app.ts", "tmp/utils.ts", "tmp/game.ts", "tmp/commands.ts"],
+  "exclude": ["tmp/**/*"]
 }

@@ -1,13 +1,16 @@
-import express, { Express, Request, Response } from 'express'
+import { initializeBotCommands } from './discord/initialize'
+import { middleware } from './middleware'
+import { routes } from './routes'
+import express, { Express } from 'express'
 
-const { PORT } = process.env
+const { PORT = 3000 } = process.env
 
 const app: Express = express()
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server')
-})
+middleware(app)
+routes(app)
 
 app.listen(PORT, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`)
+  console.log(`⚡️[server]: Server is listening on [${PORT}]`)
+  initializeBotCommands()
 })
