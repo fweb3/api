@@ -13,6 +13,6 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["server/**/*", "bots/**/*", "tmp/app.ts", "tmp/utils.ts", "tmp/game.ts", "tmp/commands.ts"],
+  "include": ["server/**/*"],
   "exclude": ["tmp/**/*"]
 }
