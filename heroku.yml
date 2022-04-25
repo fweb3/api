@@ -1,0 +1,7 @@
+build:
+  docker:
+    api: Dockerfile
+release:
+  image: api
+  command:
+    - echo 'Starting server after deployment!';

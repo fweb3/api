@@ -1,13 +1,13 @@
-name: Deploy Heroku
+# name: Deploy Heroku
 
-on: [push]
+# on: [push]
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: npm i
-    - name: Unit Tests
-      run: npm run test:ci
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#     - uses: actions/checkout@v1
+#     - name: Install dependencies
+#       run: npm i
+#     - name: Unit Tests
+#       run: npm run test:ci
