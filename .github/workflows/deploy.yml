@@ -6,10 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: npm i
-    - name: Build
-      run: npm run build
     - name: Login to Heroku Container registry
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}

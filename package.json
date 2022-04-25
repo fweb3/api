@@ -7,8 +7,8 @@
     "node": "16.x"
   },
   "scripts": {
-    "build": "tsc -p tsconfig-build.json",
-    "clean": "rm -rf dist && npm run build",
+    "build": "node_modules/.bin/tsc -p tsconfig-build.json",
+    "build:clean": "rm -rf dist && npm run build",
     "start": "node ./dist/app.js",
     "dev": "nodemon -r dotenv/config server/app.ts",
     "test": "jest",
