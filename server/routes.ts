@@ -8,7 +8,7 @@ import { Request, Response } from 'express'
 
 export function routes(app) {
   app.get('/', (req: Request, res: Response) => {
-    res.status(500).json('no')
+    res.status(500).json('nope')
   })
 
   app.get('/heartbeat', (req: Request, res: Response) => {
