@@ -3,14 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "build": "tsc -p tsconfig-build.json",
-    "clean": "rm -rf dist && npm run build",
+    "build:clean": "rm -rf dist && npm run build",
+    "lint": "eslint .",
+    "pretty": "prettier --check .",
+    "pretty:fix": "prettier -w .",
     "start": "node ./dist/app.js",
     "dev": "nodemon -r dotenv/config server/app.ts",
     "test": "jest",
     "test:ci": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "“Ryan <“aarchaeopteryxx@gmail.com”> (https://github.com/archae0pteryx)",
@@ -24,11 +31,15 @@
     "@typescript-eslint/parser": "^5.20.0",
     "dotenv": "^16.0.0",
     "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15",
+    "prettier": "^2.6.2",
     "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "husky": "^7.0.0"
   },
   "dependencies": {
     "body-parser": "^1.20.0",

@@ -1,6 +1,6 @@
 FROM node:16-alpine
 COPY . ./app
 WORKDIR /app
-RUN npm install --only=production
-CMD npm run build
+RUN npm install --frozen-lockfile
+RUN npm run build:clean
 CMD npm run start
