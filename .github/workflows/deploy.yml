@@ -9,11 +9,11 @@ jobs:
       name: Deploy
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
-      - name: Install dependencies
-        run: npm i
-      - name: Build
-        run: npm run build
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "fweb3-api"
           heroku_email: "aarchaeopteryxx@gmail.com"
+      # name: Install dependencies
+      #   run: npm i
+      # - name: Build
+      #   run: npm run build
