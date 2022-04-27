@@ -51,13 +51,13 @@ export const fetchFaucetBalances = async (network: string) => {
 
   return {
     fweb3: {
-      token_balance: fweb3Balance.toString(),
-      matic_balance: fweb3MaticBalance.toString(),
-      drip_amount: fweb3Drip.toString(),
+      token_balance: ethers.utils.formatEther(fweb3Balance.toString()),
+      matic_balance: ethers.utils.formatEther(fweb3MaticBalance.toString()),
+      drip_amount: ethers.utils.formatEther(fweb3Drip.toString()),
     },
     matic: {
-      matic_balance: maticFaucetBalance.toString(),
-      drip_amount: maticDrip.toString(),
+      matic_balance: ethers.utils.formatEther(maticFaucetBalance.toString()),
+      drip_amount: ethers.utils.formatEther(maticDrip.toString()),
     },
   }
 }

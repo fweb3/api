@@ -12,5 +12,5 @@ routes(app)
 
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is listening on [${PORT}]`)
-  initializeBotCommands()
+  // initializeBotCommands()
 })
