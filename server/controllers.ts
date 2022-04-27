@@ -1,17 +1,30 @@
 import { processCommand } from './discord/commands'
-import { fetchFaucetBalances } from './faucet/balance'
 import { Request, Response } from 'express'
-import { formatError } from './faucet/errors'
+import {
+  fetchFaucetBalances,
+  requestDripFromFaucet,
+  formatError,
+} from './faucet'
 
 export const faucetController = async (req: Request, res: Response) => {
-  res.send('no implemented')
+  try {
+    const receipt = await requestDripFromFaucet(req.body)
+    res.status(200).json(receipt)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({
+      error: formatError(err),
+      status: 'error',
+      code: err?.code || 'NO_CODE',
+    })
+  }
 }
 
 export const balanceController = async (req: Request, res: Response) => {
   try {
     const { network } = req.query
     const payload = await fetchFaucetBalances(network.toString())
-    res.send(payload)
+    res.status(200).json(payload)
   } catch (err: unknown) {
     console.error(err)
     res.status(500).json({ status: 'error', error: formatError(err as Error) })
