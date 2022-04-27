@@ -1,4 +1,4 @@
-import { initializeBotCommands } from './discord/initialize'
+// import { initializeBotCommands } from './discord/initialize'
 import { middleware } from './middleware'
 import { routes } from './routes'
 import express, { Express } from 'express'

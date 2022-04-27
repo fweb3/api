@@ -1,4 +1,4 @@
-name: Deploy Heroku
+name: Tests and lint
 
 on: [push]
 
@@ -11,5 +11,5 @@ jobs:
       run: npm i
     - name: Unit Tests
       run: npm run test:ci
-    # - name: Lint
-    #   run: npm run lint
+    - name: Lint
+      run: npm run lint
