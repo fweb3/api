@@ -1,5 +1,6 @@
 import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
+
 const {
   LOCAL_PRIVK,
   MUMBAI_PRIVK,
@@ -8,7 +9,7 @@ const {
   ALCHEMY_TESTNET_API_KEY,
 } = process.env
 
-type Provider =
+export type Provider =
   | ethers.providers.JsonRpcProvider
   | ethers.providers.InfuraProvider
   | ethers.providers.BaseProvider

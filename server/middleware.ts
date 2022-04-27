@@ -3,8 +3,9 @@ import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import { verifyKey } from 'discord-interactions'
+import cors from 'cors'
 
-const { API_KEYS } = process.env
+const { API_TOKENS, ALLOWED_HOSTS } = process.env
 
 export function verifyDiscordRequest(clientKey) {
   return function (req, res, buf) {
@@ -25,7 +26,7 @@ export const tokenMiddleware = (
   next: NextFunction
 ) => {
   const { authorization } = req.headers
-  const keysArr = API_KEYS.split(',')
+  const keysArr = API_TOKENS.split(',')
   const token = authorization?.split('Bearer ')[1]
 
   if (!keysArr?.includes(token)) {
@@ -35,6 +36,10 @@ export const tokenMiddleware = (
   }
 
   next()
+}
+const corsConfig = {
+  origin: ALLOWED_HOSTS.split(','),
+  methods: ['GET', 'POST', 'OPTIONS'],
 }
 
 export const middleware = (app: Express) => {
@@ -47,5 +52,6 @@ export const middleware = (app: Express) => {
   app.use(bodyParser.json())
   app.use(morgan('tiny'))
   app.use(helmet())
+  app.use(cors(corsConfig))
   app.use('/faucet', tokenMiddleware)
 }
