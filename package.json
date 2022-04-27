@@ -1,7 +1,19 @@
 {
   "name": "fweb3-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Api behind the fweb3 ecosystem",
+  "homepage": "https://github.com/fweb3/api#readme",
+  "keywords": [
+    "fweb3",
+    "blockchain",
+    "game"
+  ],
+  "author": "archae0pteryx (https://github.com/archae0pteryx)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fweb3/issues",
+    "email": "dont@email.me"
+  },
   "main": "dist/app.js",
   "engines": {
     "node": "16.x"
@@ -19,9 +31,6 @@
     "test:watch": "jest --watchAll",
     "prepare": "husky install"
   },
-  "keywords": [],
-  "author": "“Ryan <“aarchaeopteryxx@gmail.com”> (https://github.com/archae0pteryx)",
-  "license": "ISC",
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.1",
