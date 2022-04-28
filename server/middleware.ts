@@ -37,9 +37,11 @@ export const tokenMiddleware = (
 
   next()
 }
+
 const corsConfig = {
   origin: ALLOWED_HOSTS.split(','),
   methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }
 
 export const middleware = (app: Express) => {
