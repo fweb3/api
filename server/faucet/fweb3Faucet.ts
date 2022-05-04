@@ -20,7 +20,7 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
     'fweb3Token'
   )
   const fweb3TokenAbi: ethers.ContractInterface = loadAbi('fweb3Token')
-  const fweb3TokenContract = new ethers.Contract(
+  const fweb3TokenContract: ethers.Contract = new ethers.Contract(
     fweb3TokenAddress,
     fweb3TokenAbi,
     wallet
@@ -40,8 +40,7 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
   const receipt: ethers.ContractReceipt = await attemptTransaction(
     provider,
     network.toString(),
-    fweb3FaucetContract.dripFweb3,
-    account.toString()
+    fweb3FaucetContract.dripFweb3
   )
 
   if (!receipt) {

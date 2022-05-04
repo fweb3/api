@@ -2,3 +2,4 @@ dist
 .github
 tmp
 .vscode
+./types
