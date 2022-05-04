@@ -10,7 +10,7 @@ const _isNotValidPrice = (price: number) =>
 
 export const attemptTransaction = async (
   provider: Provider,
-  contractFunction,
+  dripFweb3,
   address: string
 ) => {
   const prices = await getGasPrices(provider)
@@ -30,7 +30,7 @@ export const attemptTransaction = async (
         throw new Error('Gas is unpredictable. Try again later.')
       }
 
-      const tx = await contractFunction(address, {
+      const tx = await dripFweb3(address, {
         gasPrice: prices[i], // setting a gasLimit has problems
       })
 

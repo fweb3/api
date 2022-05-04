@@ -37,18 +37,59 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
     wallet
   )
 
+  if (network !== 'polygon') {
+    return _developmentTransaction(
+      fweb3TokenContract,
+      fweb3FaucetContract,
+      account
+    )
+  } else {
+    return __mainnetTransaction(provider, fweb3FaucetContract, account)
+  }
+}
+
+const _developmentTransaction = async (
+  tokenContract: ethers.Contract,
+  faucetContract: ethers.Contract,
+  account: string
+) => {
+  const tx = await faucetContract.dripFweb3(account)
+  const receipt = await tx.wait()
+
+  if (!receipt) {
+    throw new Error('Network is congested. Please try again later')
+  }
+
+  const fweb3FaucetBalance: BigNumber = await tokenContract.balanceOf(
+    faucetContract.address
+  )
+
+  console.log({
+    sent_fweb3_to: account,
+    fweb3_faucet_balance: fweb3FaucetBalance.toString(),
+    tx: receipt.transactionHash,
+  })
+
+  return receipt
+}
+
+const __mainnetTransaction = async (
+  provider: Provider,
+  contract: ethers.Contract,
+  account: string
+) => {
   const receipt: ethers.ContractReceipt = await attemptTransaction(
     provider,
-    network.toString(),
-    fweb3FaucetContract.dripFweb3
+    contract.dripFweb3,
+    account.toString()
   )
 
   if (!receipt) {
     throw new Error('Network is congested. Please try again later')
   }
 
-  const fweb3FaucetBalance: BigNumber = await fweb3TokenContract.balanceOf(
-    fweb3FaucetContract.address
+  const fweb3FaucetBalance: BigNumber = await contract.balanceOf(
+    contract.address
   )
 
   console.log({
