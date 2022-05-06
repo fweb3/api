@@ -1,3 +1,8 @@
 build:
   docker:
-    api: Dockerfile
+    web: Dockerfile
+release:
+  image: web
+  command:
+    - npm i
+    - npm run build:clean
