@@ -1,4 +1,3 @@
-import { tokenMiddleware } from './middleware'
 import { Request, Response } from 'express'
 import {
   discordController,
@@ -15,9 +14,7 @@ export const routes = (app) => {
     res.status(200).json('thump thump')
   })
 
-  app.post('/discord/interactions', discordController)
-
-  app.use('/api', tokenMiddleware)
+  app.post('/bots/discord', discordController)
   app.post('/api/faucet', faucetController)
   app.get('/api/balance', balanceController)
 }

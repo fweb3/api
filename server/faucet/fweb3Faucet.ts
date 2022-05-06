@@ -38,7 +38,7 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
     wallet
   )
 
-  if (network !== 'polygon') {
+  if (network === 'local') {
     return _developmentTransaction(
       fweb3TokenContract,
       fweb3FaucetContract,
@@ -59,6 +59,7 @@ const _developmentTransaction = async (
   faucetContract: ethers.Contract,
   account: string
 ) => {
+  log.debug('[+] Running tx without gas estimator')
   const tx = await faucetContract.dripFweb3(account)
   const receipt = await tx.wait()
 
@@ -85,6 +86,8 @@ const _gasEstimateTransaction = async (
   contract: ethers.Contract,
   account: string
 ) => {
+  log.debug('[+] Running tx with gas estimator')
+
   const receipt = await attemptTransactionWithGas(
     network,
     provider,

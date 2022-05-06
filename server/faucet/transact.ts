@@ -15,7 +15,9 @@ export const attemptTransactionWithGas = async (
   faucetMethod,
   address: string
 ) => {
+  log.debug('[+] Getting current gas prices')
   const prices = await getGasPrices(network, provider)
+  log.debug(`[+] Got prices [${prices}]`)
   const gasLimitGwei = ethers.utils.parseUnits(GAS_LIMIT?.toString(), 'gwei')
   log.debug(`[+] Gas limit set to: [${gasLimitGwei}]`)
 

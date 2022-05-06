@@ -10,23 +10,26 @@ export const getGasPrices = async (
   provider: Provider
 ): Promise<number[]> => {
   try {
+    log.debug('[+] Fetching gas estimate...')
     const gasRes = await _fetchGasEstimate(network)
 
     if (!gasRes.ok) {
       throw new Error('try provider estimate')
     }
+
     const {
       fast: { maxPriorityFee: gasEstimateGwei },
     } = await gasRes.json()
-
     if (!gasEstimateGwei) {
       throw new Error('try provider estimate')
     }
-    const gasEstimateWei: number = ethers.utils
+    const convertedEstimateInWei: number = ethers.utils
       .parseUnits(gasEstimateGwei.toFixed(5).toString(), 'gwei')
       .toNumber()
 
-    return _createPriceArray(gasEstimateWei)
+    log.debug(`[+] Gas estimate in wei: [${convertedEstimateInWei}]`)
+
+    return _createPriceArray(convertedEstimateInWei)
   } catch (err) {
     log.error(err)
     const { gasPrice } = await provider.getFeeData()

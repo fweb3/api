@@ -46,14 +46,12 @@ const corsConfig = {
 
 export const middleware = (app: Express) => {
   app.use(
-    '/discord',
-    express.json({
-      verify: verifyDiscordRequest(process.env.DISCORD_PUBLIC_KEY),
-    })
+    '/bots/discord',
+    express.json({ verify: verifyDiscordRequest(process.env.PUBLIC_KEY) })
   )
+  app.use('/api', tokenMiddleware)
   app.use(bodyParser.json())
   app.use(morgan('common'))
   app.use(helmet())
   app.use(cors(corsConfig))
-  app.use('/faucet', tokenMiddleware)
 }
