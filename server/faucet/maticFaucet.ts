@@ -3,9 +3,10 @@ import { ethers } from 'ethers'
 import { getPrivk, getProvider, Provider } from './interfaces'
 import { loadAbi, getContractAddress } from './contracts'
 import type { IFaucetBody } from './faucet'
+import { log } from '../logger'
 
 export const useMaticFaucet = async ({ network, account }: IFaucetBody) => {
-  console.log(`[+] Initializing matic faucet request on ${network}`)
+  log.debug(`[+] Initializing matic faucet request on ${network}`)
   const privk = getPrivk(network.toString())
 
   if (!privk) {
@@ -58,7 +59,7 @@ const _gasEstimatedTransaction = async (
 
   const endBalance = await provider.getBalance(contract.address)
 
-  console.log({
+  log.debug({
     sent_matic_to: account,
     matic_faucet_end_balance: endBalance.toString(),
     tx_receipt: receipt,
@@ -81,7 +82,7 @@ const _localTransaction = async (
 
   const endBalance = await provider.getBalance(contract.address)
 
-  console.log({
+  log.debug({
     sent_matic_to: account,
     matic_faucet_end_balance: endBalance.toString(),
     tx_receipt: receipt,

@@ -2,10 +2,11 @@ import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ethers } from 'ethers'
 import { getPrivk, getProvider, Provider } from './interfaces'
 import { loadAbi, getContractAddress } from './contracts'
+import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
 
 export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
-  console.log(`[+] Initializing fweb3 faucet request on ${network}`)
+  log.debug(`[+] Initializing fweb3 faucet request on ${network}`)
   const privk: string = getPrivk(network.toString())
 
   if (!privk) {
@@ -69,7 +70,7 @@ const _developmentTransaction = async (
     faucetContract.address
   )
 
-  console.log({
+  log.debug({
     sent_fweb3_to: account,
     fweb3_faucet_balance: fweb3FaucetBalance.toString(),
     tx: receipt.transactionHash,
@@ -99,7 +100,7 @@ const _gasEstimateTransaction = async (
     contract.address
   )
 
-  console.log({
+  log.debug({
     sent_fweb3_to: account,
     fweb3_faucet_balance: fweb3FaucetBalance.toString(),
     tx: receipt,

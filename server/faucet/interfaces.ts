@@ -1,5 +1,6 @@
 import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { ethers } from 'ethers'
+import { log } from '../logger'
 
 const {
   LOCAL_PRIVK,
@@ -17,26 +18,26 @@ export type Provider =
 
 export const getProvider = (network: string): Provider => {
   if (network === 'polygon' || network === 'original') {
-    console.log(`[+] using mainnet provider`)
+    log.debug(`[+] using mainnet provider`)
     return new AlchemyProvider('matic', ALCHEMY_MAINNET_API_KEY)
   } else if (network === 'mumbai') {
-    console.log(`[+] using mumbai alchemy provider`)
+    log.debug(`[+] using mumbai alchemy provider`)
     return new AlchemyProvider('maticmum', ALCHEMY_TESTNET_API_KEY)
   } else {
-    console.log(`[+] using local provider rpc provider`)
+    log.debug(`[+] using local provider rpc provider`)
     return new JsonRpcProvider('http://localhost:8545')
   }
 }
 
 export const getPrivk = (network: string): string => {
   if (network === 'polygon') {
-    console.log('[+] using polygon wallet')
+    log.debug('[+] using polygon wallet')
     return POLYGON_PRIVK || ''
   } else if (network === 'mumbai') {
-    console.log('[+] using mumbai wallet')
+    log.debug('[+] using mumbai wallet')
     return MUMBAI_PRIVK || ''
   } else {
-    console.log('[+] using local wallet')
+    log.debug('[+] using local wallet')
     return LOCAL_PRIVK || ''
   }
 }

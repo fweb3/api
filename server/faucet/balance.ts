@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { getContractAddress } from './contracts/addresses'
 import { getPrivk, getProvider } from './interfaces'
 import { loadAbi } from './contracts/abi'
+import { log } from '../logger'
 
 export const fetchFaucetBalances = async (network: string) => {
   if (!network) {
@@ -43,11 +44,25 @@ export const fetchFaucetBalances = async (network: string) => {
     wallet
   )
 
+  log.debug('[+] fetching balances...')
+  log.debug(`[+] fweb3 token address: [${fweb3TokenAddress}]`)
+  log.debug(`[+] fweb3 faucet address: [${fweb3FaucetAddress}]`)
+  log.debug(`[+] matic faucet address: [${maticFaucetAddress}]`)
+
   const fweb3Drip = await fweb3Faucet.dripAmount()
+  log.debug(`[+] fweb3_faucet_drip: ${fweb3Drip}`)
+
   const fweb3Balance = await fweb3Token.balanceOf(fweb3FaucetAddress)
+  log.debug(`[+] fweb3_faucet_balance: ${fweb3Balance}`)
+
   const fweb3MaticBalance = await provider.getBalance(fweb3FaucetAddress)
+  log.debug(`[+] fweb3_faucet_matic: ${fweb3MaticBalance}`)
+
   const maticDrip = await maticFaucet.dripAmount()
+  log.debug(`[+] matic_faucet_drip: ${maticDrip}`)
+
   const maticFaucetBalance = await provider.getBalance(maticFaucetAddress)
+  log.debug(`[+] matic_faucet_balance: ${maticFaucetBalance}`)
 
   return {
     fweb3: {

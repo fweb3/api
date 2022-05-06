@@ -1,6 +1,7 @@
 import { Provider } from './interfaces'
 import { ethers } from 'ethers'
 import fetch from 'node-fetch'
+import { log } from '../logger'
 
 const { GAS_LIMIT = 200000000000, GAS_MULTIPLIER = 0.2 } = process.env
 
@@ -27,6 +28,7 @@ export const getGasPrices = async (
 
     return _createPriceArray(gasEstimateWei)
   } catch (err) {
+    log.error(err)
     const { gasPrice } = await provider.getFeeData()
     const prices = _createPriceArray(gasPrice?.toNumber() || 0)
     return prices ?? [parseInt(GAS_LIMIT.toString())]
