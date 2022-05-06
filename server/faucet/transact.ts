@@ -1,21 +1,23 @@
 import { ethers } from 'ethers'
+import { formatError } from './errors'
 import { getGasPrices } from './gas'
 import type { Provider } from './interfaces'
-import { formatError } from './errors'
 
 const { GAS_LIMIT = 200000000000 } = process.env
 
 const _isNotValidPrice = (price: number) =>
   !price || price === 0 || price > parseInt(GAS_LIMIT.toString())
 
-export const attemptTransaction = async (
+export const attemptTransactionWithGas = async (
+  network: string,
   provider: Provider,
-  dripFweb3,
+  faucetMethod,
   address: string
 ) => {
-  const prices = await getGasPrices(provider)
+  const prices = await getGasPrices(network, provider)
   const gasLimitGwei = ethers.utils.parseUnits(GAS_LIMIT?.toString(), 'gwei')
   console.log(`[+] Gas limit set to: [${gasLimitGwei}]`)
+
   for (let i = 0; i < prices.length; i++) {
     try {
       if (prices[i] === prices.length) {
@@ -30,11 +32,10 @@ export const attemptTransaction = async (
         throw new Error('Gas is unpredictable. Try again later.')
       }
 
-      const tx = await dripFweb3(address, {
-        gasPrice: prices[i], // setting a gasLimit has problems
-      })
+      const tx = await faucetMethod(address)
 
       return tx.wait()
+      return {}
     } catch (err) {
       const formattedError = formatError(err)
       const gasReason = _isGasError(formattedError)

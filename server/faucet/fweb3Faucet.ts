@@ -1,4 +1,4 @@
-import { attemptTransaction } from './transact'
+import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ethers } from 'ethers'
 import { getPrivk, getProvider, Provider } from './interfaces'
 import { loadAbi, getContractAddress } from './contracts'
@@ -44,7 +44,12 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
       account
     )
   } else {
-    return __mainnetTransaction(provider, fweb3FaucetContract, account)
+    return _gasEstimateTransaction(
+      network,
+      provider,
+      fweb3FaucetContract,
+      account
+    )
   }
 }
 
@@ -73,12 +78,14 @@ const _developmentTransaction = async (
   return receipt
 }
 
-const __mainnetTransaction = async (
+const _gasEstimateTransaction = async (
+  network: string,
   provider: Provider,
   contract: ethers.Contract,
   account: string
 ) => {
-  const receipt: ethers.ContractReceipt = await attemptTransaction(
+  const receipt = await attemptTransactionWithGas(
+    network,
     provider,
     contract.dripFweb3,
     account.toString()
@@ -95,7 +102,7 @@ const __mainnetTransaction = async (
   console.log({
     sent_fweb3_to: account,
     fweb3_faucet_balance: fweb3FaucetBalance.toString(),
-    tx: receipt.transactionHash,
+    tx: receipt,
   })
 
   return receipt

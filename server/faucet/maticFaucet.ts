@@ -1,4 +1,4 @@
-import { attemptTransaction } from './transact'
+import { attemptTransactionWithGas } from './transact'
 import { ethers } from 'ethers'
 import { getPrivk, getProvider, Provider } from './interfaces'
 import { loadAbi, getContractAddress } from './contracts'
@@ -13,12 +13,13 @@ export const useMaticFaucet = async ({ network, account }: IFaucetBody) => {
   }
 
   const provider = await getProvider(network.toString())
-  const wallet = await new ethers.Wallet(privk || '', provider)
+  const wallet = new ethers.Wallet(privk || '', provider)
 
   const maticFaucetAddress = getContractAddress(
     network.toString(),
     'fweb3MaticFaucet'
   )
+
   const maticFaucetAbi = loadAbi('fweb3MaticFaucet')
   const maticFaucetContract = new ethers.Contract(
     maticFaucetAddress,
@@ -26,14 +27,11 @@ export const useMaticFaucet = async ({ network, account }: IFaucetBody) => {
     wallet
   )
 
-  if (network !== 'polygon') {
-    return _developmentTransaction(
-      provider,
-      maticFaucetContract,
-      account.toString()
-    )
+  if (network === 'local') {
+    return _localTransaction(provider, maticFaucetContract, account.toString())
   } else {
-    return _mainnetTransaction(
+    return _gasEstimatedTransaction(
+      network,
       provider,
       maticFaucetContract,
       account.toString()
@@ -41,12 +39,18 @@ export const useMaticFaucet = async ({ network, account }: IFaucetBody) => {
   }
 }
 
-const _mainnetTransaction = async (
+const _gasEstimatedTransaction = async (
+  network: string,
   provider: Provider,
   contract: ethers.Contract,
   account: string
 ) => {
-  const receipt = await attemptTransaction(provider, contract, account)
+  const receipt = await attemptTransactionWithGas(
+    network,
+    provider,
+    contract.dripMatic,
+    account
+  )
 
   if (!receipt) {
     throw new Error('Gas prices are too high. Please try again later')
@@ -63,7 +67,7 @@ const _mainnetTransaction = async (
   return receipt
 }
 
-const _developmentTransaction = async (
+const _localTransaction = async (
   provider: Provider,
   contract: ethers.Contract,
   account: string

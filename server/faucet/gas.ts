@@ -1,11 +1,16 @@
 import { Provider } from './interfaces'
 import { ethers } from 'ethers'
+import fetch from 'node-fetch'
 
 const { GAS_LIMIT = 200000000000, GAS_MULTIPLIER = 0.2 } = process.env
 
-export const getGasPrices = async (provider: Provider): Promise<number[]> => {
+export const getGasPrices = async (
+  network: string,
+  provider: Provider
+): Promise<number[]> => {
   try {
-    const gasRes = await fetch('https://gasstation-mainnet.matic.network/v2')
+    const gasRes = await _fetchGasEstimate(network)
+
     if (!gasRes.ok) {
       throw new Error('try provider estimate')
     }
@@ -19,6 +24,7 @@ export const getGasPrices = async (provider: Provider): Promise<number[]> => {
     const gasEstimateWei: number = ethers.utils
       .parseUnits(gasEstimateGwei.toFixed(5).toString(), 'gwei')
       .toNumber()
+
     return _createPriceArray(gasEstimateWei)
   } catch (err) {
     const { gasPrice } = await provider.getFeeData()
@@ -42,6 +48,14 @@ const _createPriceArray = (gasEstimate: number): number[] => {
       return increase
     }, 0)
   return prices
+}
+
+const _fetchGasEstimate = async (network: string) => {
+  if (network !== 'polygon') {
+    return fetch('https://gasstation-mumbai.matic.today/v2')
+  } else {
+    return fetch('https://gasstation-mainnet.matic.network/v2')
+  }
 }
 
 const _increaseFeeByPercent = (amt: number) => {

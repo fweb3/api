@@ -30,7 +30,8 @@
     "test:ci": "jest",
     "test:watch": "jest --watchAll",
     "prepare": "husky install",
-    "typegen": "npx typechain --target=ethers-v5 server/faucet/contracts/abi/*.json"
+    "typegen": "npx typechain --target=ethers-v5 server/faucet/contracts/abi/*.json",
+    "sync:local": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts local"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.0.0",
