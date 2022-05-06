@@ -52,7 +52,7 @@ export const middleware = (app: Express) => {
     })
   )
   app.use(bodyParser.json())
-  app.use(morgan('tiny'))
+  app.use(morgan('common'))
   app.use(helmet())
   app.use(cors(corsConfig))
   app.use('/faucet', tokenMiddleware)
