@@ -26,7 +26,7 @@ export const balanceController = async (req: Request, res: Response) => {
     const payload = await fetchFaucetBalances(network.toString())
     res.status(200).json(payload)
   } catch (err: unknown) {
-    console.error(err)
+    console.error({ err })
     res.status(500).json({ status: 'error', error: formatError(err as Error) })
   }
 }
