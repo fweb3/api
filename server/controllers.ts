@@ -1,13 +1,12 @@
 import { processCommand } from './discord/commands'
 import { Request, Response } from 'express'
 import { fetchFaucetBalances, requestDripFromFaucet } from './faucet'
-import type { IErrors } from './faucet/errors'
 
 export const faucetController = async (req: Request, res: Response) => {
   try {
     const receipt = await requestDripFromFaucet(req.body)
     res.status(200).json(receipt)
-  } catch (formattedError: IErrors | unknown) {
+  } catch (formattedError: unknown) {
     res.status(500).json(formattedError)
   }
 }
@@ -17,7 +16,7 @@ export const balanceController = async (req: Request, res: Response) => {
     const { network } = req.query
     const payload = await fetchFaucetBalances(network.toString())
     res.status(200).json(payload)
-  } catch (formattedError: IErrors | unknown) {
+  } catch (formattedError: unknown) {
     res.status(500).json(formattedError)
   }
 }
