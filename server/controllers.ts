@@ -16,6 +16,7 @@ export const faucetController = async (req: Request, res: Response) => {
       error: formatError(err),
       status: 'error',
       code: err?.code || 'NO_CODE',
+      raw: err,
     })
   }
 }

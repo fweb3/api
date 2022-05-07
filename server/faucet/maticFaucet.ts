@@ -53,10 +53,6 @@ const _gasEstimatedTransaction = async (
     account
   )
 
-  if (!receipt) {
-    throw new Error('Gas prices are too high. Please try again later')
-  }
-
   const endBalance = await provider.getBalance(contract.address)
 
   log.debug({
@@ -75,10 +71,6 @@ const _localTransaction = async (
 ) => {
   const tx = await contract.dripMatic(account)
   const receipt = await tx.wait()
-
-  if (!receipt) {
-    throw new Error('Gas prices are too high. Please try again later')
-  }
 
   const endBalance = await provider.getBalance(contract.address)
 

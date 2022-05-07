@@ -64,10 +64,6 @@ const _developmentTransaction = async (
   const tx = await faucetContract.dripFweb3(account)
   const receipt = await tx.wait()
 
-  if (!receipt) {
-    throw new Error('Network is congested. Please try again later')
-  }
-
   const fweb3FaucetBalance: BigNumber = await tokenContract.balanceOf(
     faucetContract.address
   )
@@ -96,10 +92,6 @@ const _gasEstimateTransaction = async (
     contract.dripFweb3,
     account.toString()
   )
-
-  if (!receipt) {
-    throw new Error('Network is congested. Please try again later')
-  }
 
   const fweb3FaucetBalance: BigNumber = await fweb3TokenContract.balanceOf(
     contract.address

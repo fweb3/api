@@ -6,8 +6,8 @@ import { log } from '../logger'
 
 const { GAS_LIMIT = 200000000000 } = process.env
 
-const _isNotValidPrice = (price: number) =>
-  !price || price === 0 || price > parseInt(GAS_LIMIT.toString())
+// const _isNotValidPrice = (price: number) =>
+//   !price || price === 0 || price > parseInt(GAS_LIMIT.toString())
 
 export const attemptTransactionWithGas = async (
   network: string,
@@ -31,10 +31,6 @@ export const attemptTransactionWithGas = async (
 
       log.debug(`[+] Trying gas price [${prices[i]}]`)
 
-      if (_isNotValidPrice(prices[i])) {
-        throw new Error('Gas is unpredictable. Try again later.')
-      }
-
       const tx = await faucetMethod(address)
 
       return tx.wait()
@@ -44,7 +40,7 @@ export const attemptTransactionWithGas = async (
       if (gasReason) {
         continue
       } else {
-        throw new Error(err) // formats again in the next catch
+        throw new Error(err)
       }
     }
   }
