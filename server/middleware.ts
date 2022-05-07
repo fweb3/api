@@ -4,6 +4,7 @@ import bodyParser from 'body-parser'
 import morgan from 'morgan'
 import { verifyKey } from 'discord-interactions'
 import cors from 'cors'
+import { log } from './logger'
 
 const { API_TOKENS, ALLOWED_HOSTS } = process.env
 
@@ -28,13 +29,13 @@ export const tokenMiddleware = (
   const { authorization } = req.headers
   const keysArr = API_TOKENS.split(',')
   const token = authorization?.split('Bearer ')[1]
-
   if (!keysArr?.includes(token)) {
     console.log('unauthorized')
     res.status(401).json('unauthorized')
     return
   }
 
+  log.debug('[+] authorized.')
   next()
 }
 

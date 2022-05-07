@@ -3,6 +3,9 @@ import {
   discordController,
   faucetController,
   balanceController,
+  discordGetCommands,
+  discordDeleteCommands,
+  discordPostCommands,
 } from './controllers'
 
 export const routes = (app) => {
@@ -13,8 +16,11 @@ export const routes = (app) => {
   app.get('/heartbeat', (req: Request, res: Response) => {
     res.status(200).json('thump thump')
   })
-
   app.post('/bots/discord', discordController)
+  app.get('/bots/discord/commands', discordGetCommands)
+  app.post('/bots/discord/commands', discordPostCommands)
+  app.delete('/bots/discord/commands', discordDeleteCommands)
+
   app.post('/api/faucet', faucetController)
-  app.get('/api/balance', balanceController)
+  app.get('/api/balances', balanceController)
 }

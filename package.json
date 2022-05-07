@@ -31,7 +31,8 @@
     "test:watch": "jest --watchAll",
     "prepare": "husky install",
     "typegen": "npx typechain --target=ethers-v5 server/faucet/contracts/abi/*.json",
-    "sync:local": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts local"
+    "sync:local": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts local",
+    "sync:mumbai": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts mumbai"
   },
   "devDependencies": {
     "@typechain/ethers-v5": "^10.0.0",
@@ -61,7 +62,9 @@
     "ethers": "^5.6.4",
     "express": "^4.17.3",
     "helmet": "^5.0.2",
+    "install": "^0.13.0",
     "morgan": "^1.10.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "npm": "^8.9.0"
   }
 }
