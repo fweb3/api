@@ -21,7 +21,7 @@ async function checkAndInstallCommands(command) {
   try {
     const res = await discordRequest(COMMANDS_ENDPOINT, { method: 'GET' })
     const data = await res.json()
-    console.log({ data })
+    // console.log({ data })
     // await removeAllCommands(data)
     await installGuildCommand(command)
     if (data) {

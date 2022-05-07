@@ -49,7 +49,8 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
       network,
       provider,
       fweb3FaucetContract,
-      account
+      account,
+      fweb3TokenContract
     )
   }
 }
@@ -84,7 +85,8 @@ const _gasEstimateTransaction = async (
   network: string,
   provider: Provider,
   contract: ethers.Contract,
-  account: string
+  account: string,
+  fweb3TokenContract: ethers.Contract
 ) => {
   log.debug('[+] Running tx with gas estimator')
 
@@ -99,7 +101,7 @@ const _gasEstimateTransaction = async (
     throw new Error('Network is congested. Please try again later')
   }
 
-  const fweb3FaucetBalance: BigNumber = await contract.balanceOf(
+  const fweb3FaucetBalance: BigNumber = await fweb3TokenContract.balanceOf(
     contract.address
   )
 

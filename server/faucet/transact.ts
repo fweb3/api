@@ -39,7 +39,6 @@ export const attemptTransactionWithGas = async (
 
       return tx.wait()
     } catch (err) {
-      log.error(err)
       const formattedError = formatError(err)
       const gasReason = _isGasError(formattedError)
       if (gasReason) {

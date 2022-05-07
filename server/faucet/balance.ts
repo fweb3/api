@@ -4,11 +4,15 @@ import { getPrivk, getProvider } from './interfaces'
 import { loadAbi } from './contracts/abi'
 import { log } from '../logger'
 
-export const fetchFaucetBalances = async (network: string) => {
-  if (!network) {
-    throw new Error('missing params')
-  }
+const ALLOWED_NETWORKS = ['local', 'mumbai', 'polygon']
 
+const _isAllowedNetwork = (network: string) =>
+  ALLOWED_NETWORKS.includes(network)
+
+export const fetchFaucetBalances = async (network: string) => {
+  if (!network || !_isAllowedNetwork(network.toString())) {
+    throw new Error('params not supported')
+  }
   const fweb3FaucetAddress = getContractAddress(
     network.toString(),
     'fweb3TokenFaucet'
