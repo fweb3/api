@@ -9,6 +9,10 @@ const { GAS_LIMIT = 200000000000 } = process.env
 // const _isNotValidPrice = (price: number) =>
 //   !price || price === 0 || price > parseInt(GAS_LIMIT.toString())
 
+const waitFor = (ms) => {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 export const attemptTransactionWithGas = async (
   network: string,
   provider: Provider,
@@ -23,34 +27,19 @@ export const attemptTransactionWithGas = async (
 
   for (let i = 0; i < prices.length; i++) {
     try {
-      if (prices[i] === prices.length) {
-        throw new Error(
-          `Cannot process tx. Have tried ${prices.length} times without success.`
-        )
-      }
-
       log.debug(`[+] Trying gas price [${prices[i]}]`)
-
       const tx = await faucetMethod(address)
-
       return tx.wait()
     } catch (err) {
       const formattedError = formatError(err)
-      const gasReason = _isGasError(formattedError)
-      if (gasReason) {
+      log.debug(JSON.stringify(formattedError))
+      const isGasRelated = formattedError.type.includes('GAS')
+      if (isGasRelated) {
+        await waitFor(1000)
         continue
       } else {
-        throw new Error(err)
+        throw formattedError
       }
     }
   }
-}
-
-const _isGasError = (err: string): boolean => {
-  const cannotEstimate = err.includes('cant estimate gas')
-  const notEnoughGas = err.includes('not enough gas')
-  const gasTooLowForNextBlock = err.includes(
-    'max fee per gas less than block base'
-  )
-  return cannotEstimate || notEnoughGas || gasTooLowForNextBlock
 }
