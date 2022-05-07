@@ -23,27 +23,27 @@ async function checkAndInstallCommands(command) {
     const data = await res.json()
     console.log({ data })
     // await removeAllCommands(data)
-    // await installGuildCommand(command)
-    // if (data) {
-    //   const installedNames = data?.map((command) => command['name'])
-    //   if (!installedNames.includes(command['name'])) {
-    //     console.log(`Installing "${command['name']}"`)
-    //     await installGuildCommand(command)
-    //     console.log(`Installed "${command['name']}"`)
-    //   } else {
-    //     console.log(`"${command['name']}" command already installed`)
-    //   }
-    // }
+    await installGuildCommand(command)
+    if (data) {
+      const installedNames = data?.map((command) => command['name'])
+      if (!installedNames.includes(command['name'])) {
+        console.log(`Installing "${command['name']}"`)
+        await installGuildCommand(command)
+        console.log(`Installed "${command['name']}"`)
+      } else {
+        console.log(`"${command['name']}" command already installed`)
+      }
+    }
   } catch (err) {
     console.error(err)
   }
 }
 
-const removeAllCommands = async (data) => {
-  data?.map(async ({ id }) => {
-    await discordRequest(`${COMMANDS_ENDPOINT}/${id}`, { method: 'DELETE' })
-  })
-}
+// const removeAllCommands = async (data) => {
+//   data?.map(async ({ id }) => {
+//     await discordRequest(`${COMMANDS_ENDPOINT}/${id}`, { method: 'DELETE' })
+//   })
+// }
 
 const installGuildCommand = async (command) => {
   try {
