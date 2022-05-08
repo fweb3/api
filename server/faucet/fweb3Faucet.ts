@@ -38,7 +38,7 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
     wallet
   )
 
-  if (network === 'local') {
+  if (network === 'localhost') {
     return _developmentTransaction(
       fweb3TokenContract,
       fweb3FaucetContract,

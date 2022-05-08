@@ -1,7 +1,7 @@
 /* eslint-disable */
-import fweb3TokenFaucetInterface from './Fweb3TokenFaucet.json'
-import fweb3MaticFaucetInterface from './Fweb3MaticFaucet.json'
-import fweb3TokenInterface from './Fweb3Token.json'
+import fweb3TokenFaucetInterface from './fweb3TokenFaucet.json'
+import fweb3MaticFaucetInterface from './fweb3MaticFaucet.json'
+import fweb3TokenInterface from './fweb3Token.json'
 interface IMap {
   [key: string]: any
 }

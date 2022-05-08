@@ -31,7 +31,7 @@
     "test:watch": "jest --watchAll",
     "prepare": "husky install",
     "typegen": "npx typechain --target=ethers-v5 server/faucet/contracts/abi/*.json",
-    "sync:local": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts local",
+    "sync:local": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts localhost",
     "sync:mumbai": "npx ts-node -O '{\"module\":\"commonjs\"}' scripts/sync.ts mumbai"
   },
   "devDependencies": {

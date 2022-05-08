@@ -1,4 +1,4 @@
-import * as LOCAL_ADDRESSES from './local.json'
+import * as LOCAL_ADDRESSES from './localhost.json'
 import * as MUMBAI_ADDRESSES from './mumbai.json'
 import * as POLYGON_ADDRESSES from './polygon.json'
 import * as ORIGINAL_ADDRESSES from './original.json'
@@ -10,7 +10,7 @@ interface IContractMap {
 }
 
 const CONTRACT_MAP: IContractMap = {
-  local: LOCAL_ADDRESSES,
+  localhost: LOCAL_ADDRESSES,
   mumbai: MUMBAI_ADDRESSES,
   polygon: POLYGON_ADDRESSES,
   original: ORIGINAL_ADDRESSES,

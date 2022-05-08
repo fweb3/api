@@ -1,35 +1,44 @@
 import fs from 'fs-extra'
 
-const BASE_DIR = 'server/faucet/contracts'
-const ADDRESS_DIR = `${BASE_DIR}/addresses`
+const CONTRACT_REPO_DIR = '../fweb3-contracts'
+const CONTRACT_ADDRESSES_DIR = `${CONTRACT_REPO_DIR}/deploy_addresses`
+const CONTRACT_INTERFACES_DIR = `${CONTRACT_REPO_DIR}/deploy_interfaces`
+
+const SYNC_BASE_DIR = 'server/faucet/contracts'
+const SYNC_ADDRESS_DIR = `${SYNC_BASE_DIR}/addresses`
+const SYNC_INTERFACE_DIR = `${SYNC_BASE_DIR}/abi`
 
 const _backup = (network: string) => {
   const now = Date.now()
-  const addressPath = `${ADDRESS_DIR}/${network}.json`
-  const abiPath = `${BASE_DIR}/abi/`
+  const addressPath = `${SYNC_ADDRESS_DIR}/${network}.json`
   fs.copySync(
     `${addressPath}`,
-    `${BASE_DIR}/backups/${network}/${network}_${now}.json`
+    `${SYNC_BASE_DIR}/backups/${network}_${now}.json`
   )
-  fs.copySync(`${abiPath}`, `${BASE_DIR}/backups/abi/${now}`)
+  fs.copySync(SYNC_INTERFACE_DIR, `${SYNC_BASE_DIR}/backups/abi/${now}`)
 }
 
 const syncAndWrite = (network: string): void => {
   try {
     const addresses = {}
-    const addressesPath = `../fweb3-contracts/deploy_addresses/${network}`
-    const jsonPath = `${ADDRESS_DIR}/${network}.json`
-    const addressFile = fs.readdirSync(addressesPath)
+    const contractRepoAddresses = `${CONTRACT_ADDRESSES_DIR}/${network}`
+
+    const syncAddressJsonPath = `${SYNC_ADDRESS_DIR}/${network}.json`
+    const addressFile = fs.readdirSync(contractRepoAddresses)
 
     for (const filename of addressFile) {
       const camelFilename: string = filename.replace(
         /_([a-z])/g,
         (f) => `${f[1].toUpperCase()}`
       )
-      const address = fs.readFileSync(`${addressesPath}/${filename}`, 'utf-8')
+      const address = fs.readFileSync(
+        `${contractRepoAddresses}/${filename}`,
+        'utf-8'
+      )
       addresses[camelFilename] = address.trim()
     }
-    fs.writeFileSync(jsonPath, JSON.stringify(addresses))
+    fs.writeFileSync(syncAddressJsonPath, JSON.stringify(addresses))
+    fs.copySync(CONTRACT_INTERFACES_DIR, SYNC_INTERFACE_DIR)
     console.log('synced local')
     console.log({ addresses })
   } catch (e) {

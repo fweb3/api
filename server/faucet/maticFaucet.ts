@@ -28,7 +28,7 @@ export const useMaticFaucet = async ({ network, account }: IFaucetBody) => {
     wallet
   )
 
-  if (network === 'local') {
+  if (network === 'localhost') {
     return _localTransaction(provider, maticFaucetContract, account.toString())
   } else {
     return _gasEstimatedTransaction(

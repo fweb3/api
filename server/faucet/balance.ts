@@ -4,7 +4,7 @@ import { getPrivk, getProvider } from './interfaces'
 import { loadAbi } from './contracts/abi'
 import { log } from '../logger'
 
-const ALLOWED_NETWORKS = ['local', 'mumbai', 'polygon']
+const ALLOWED_NETWORKS = ['localhost', 'mumbai', 'polygon']
 
 const _isAllowedNetwork = (network: string) =>
   ALLOWED_NETWORKS.includes(network)
