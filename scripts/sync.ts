@@ -39,7 +39,7 @@ const syncAndWrite = (network: string): void => {
     }
     fs.writeFileSync(syncAddressJsonPath, JSON.stringify(addresses))
     fs.copySync(CONTRACT_INTERFACES_DIR, SYNC_INTERFACE_DIR)
-    console.log('synced local')
+    console.log(`[+] Synced ${network}`)
     console.log({ addresses })
   } catch (e) {
     console.error(e)
