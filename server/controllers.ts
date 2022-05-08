@@ -1,11 +1,12 @@
+import { ISuccessfulDrip } from './faucet/request'
 import { processCommand } from './discord/commands'
 import { Request, Response } from 'express'
 import { fetchFaucetBalances, requestDripFromFaucet } from './faucet'
 
 export const faucetController = async (req: Request, res: Response) => {
   try {
-    const receipt = await requestDripFromFaucet(req.body)
-    res.status(200).json(receipt)
+    const payload: ISuccessfulDrip = await requestDripFromFaucet(req.body)
+    res.status(200).json(payload)
   } catch (formattedError: unknown) {
     res.status(500).json(formattedError)
   }

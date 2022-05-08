@@ -5,4 +5,4 @@ tmp
 .DS_Store
 dist
 ./types
-backups
+server/faucet/contracts/backups

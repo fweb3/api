@@ -1,12 +1,12 @@
-export interface IErrors {
+export interface IError {
+  status?: string
   type: string
   match?: string
   message: string
-  additional?: IErrors[]
   raw?: Record<string, unknown>
 }
 
-const ERROR_MAP: IErrors[] = [
+const ERROR_MAP: IError[] = [
   {
     type: 'ERROR_WALLET_LOAD',
     match: 'cannot load wallet',
@@ -24,37 +24,42 @@ const ERROR_MAP: IErrors[] = [
   },
   {
     type: 'ERROR_CONTRACT_MISSING_REQUIRED_TOKEN',
-    match: 'execution reverted: missing erc20',
+    match: 'MISSING_FWEB3_TOKENS',
     message: 'You do not have enough fweb3 to use the faucet.',
   },
   {
     type: 'ERROR_CONTRACT_FWEB3_LIMIT',
-    match: 'execution reverted: limit',
+    match: 'FWEB3_WALLET_LIMIT',
     message: 'Wallet has enough fweb3.',
   },
   {
     type: 'ERROR_CONTRACT_FAUCET_USED',
-    match: 'execution reverted: used',
+    match: 'SINGLE_USE',
     message: 'Wallet already used. Faucet is single use.',
   },
   {
     type: 'ERROR_CONTRACT_TOO_EARLY',
-    match: 'execution reverted: timeout',
+    match: 'WALLET_TIMEOUT',
     message: 'Too early for another drip.',
   },
   {
     type: 'ERROR_CONTRACT_ALREADY_ENOUGH_MATIC',
-    match: 'execution reverted: no need',
+    match: 'HOLDER_LIMIT',
     message: 'You already have more than enough MATIC.',
   },
   {
     type: 'ERROR_CONTRACT_FAUCET_DISABLED',
-    match: 'execution reverted: disabled',
+    match: 'FAUCET_DISABLED',
     message: 'Faucet is disabled.',
   },
   {
+    type: 'ERROR_CONTRACT_TX_FAILURE',
+    match: 'TX_FAILURE',
+    message: 'Faucet TX failed internally.',
+  },
+  {
     type: 'ERROR_CONTRACT_FAUCET_DRY',
-    match: 'execution reverted: dry',
+    match: '_DRY',
     message: 'Faucet is out of required funds.',
   },
   {
@@ -94,20 +99,15 @@ const ERROR_MAP: IErrors[] = [
   },
 ]
 
-export const formatError = (err): IErrors => {
-  const rpcErrorJson = JSON.parse(err.error?.error?.body)
-  const contractError = rpcErrorJson?.error?.message
-  const possibleErrors = ERROR_MAP.filter((e) =>
-    contractError.includes(e.match)
-  )
+export const formatError = (err): IError => {
+  const possibleErrors = ERROR_MAP.filter((e) => err.message.includes(e.match))
   if (possibleErrors.length === 1) {
     return possibleErrors[0]
   }
-  const [first, ...additional] = possibleErrors
   return {
-    type: first.type,
-    message: first.message,
-    additional,
+    status: 'error',
+    type: possibleErrors[0].type,
+    message: possibleErrors[0].message,
     raw: err,
   }
 }

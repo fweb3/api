@@ -1,27 +1,37 @@
+import { formatError, IError } from './errors'
 import { attemptTransactionWithGas } from './transact'
-import { ethers } from 'ethers'
 import { getPrivk, getProvider, Provider } from './interfaces'
 import { loadAbi, getContractAddress } from './contracts'
 import type { IFaucetBody } from './faucet'
 import { log } from '../logger'
+import {
+  BigNumber,
+  ContractReceipt,
+  ContractTransaction,
+  ethers,
+  Wallet,
+} from 'ethers'
 
-export const useMaticFaucet = async ({ network, account }: IFaucetBody) => {
+export const useMaticFaucet = async ({
+  network,
+  account,
+}: IFaucetBody): Promise<ContractReceipt> => {
   log.debug(`[+] Initializing matic faucet request on ${network}`)
-  const privk = getPrivk(network.toString())
+  const privk: string = getPrivk(network.toString())
 
   if (!privk) {
     throw new Error('cannot load wallet')
   }
 
-  const provider = await getProvider(network.toString())
-  const wallet = new ethers.Wallet(privk || '', provider)
+  const provider: Provider = await getProvider(network.toString())
+  const wallet: Wallet = new ethers.Wallet(privk || '', provider)
 
-  const maticFaucetAddress = getContractAddress(
+  const maticFaucetAddress: string = getContractAddress(
     network.toString(),
     'fweb3MaticFaucet'
   )
 
-  const maticFaucetAbi = loadAbi('fweb3MaticFaucet')
+  const maticFaucetAbi: string = loadAbi('fweb3MaticFaucet')
   const maticFaucetContract = new ethers.Contract(
     maticFaucetAddress,
     maticFaucetAbi,
@@ -45,15 +55,15 @@ const _gasEstimatedTransaction = async (
   provider: Provider,
   contract: ethers.Contract,
   account: string
-) => {
-  const receipt = await attemptTransactionWithGas(
+): Promise<ContractReceipt> => {
+  const receipt: ContractReceipt = await attemptTransactionWithGas(
     network,
     provider,
-    contract.dripMatic,
+    contract.drip,
     account
   )
 
-  const endBalance = await provider.getBalance(contract.address)
+  const endBalance: BigNumber = await provider.getBalance(contract.address)
 
   log.debug({
     sent_matic_to: account,
@@ -68,17 +78,23 @@ const _localTransaction = async (
   provider: Provider,
   contract: ethers.Contract,
   account: string
-) => {
-  const tx = await contract.dripMatic(account)
-  const receipt = await tx.wait()
+): Promise<ContractReceipt> => {
+  try {
+    const tx: ContractTransaction = await contract.drip(account)
+    const receipt: ContractReceipt = await tx.wait()
 
-  const endBalance = await provider.getBalance(contract.address)
+    const endBalance: BigNumber = await provider.getBalance(contract.address)
 
-  log.debug({
-    sent_matic_to: account,
-    matic_faucet_end_balance: endBalance.toString(),
-    tx_receipt: receipt,
-  })
+    log.debug({
+      sent_matic_to: account,
+      matic_faucet_end_balance: endBalance.toString(),
+      tx_receipt: receipt,
+    })
 
-  return receipt
+    return receipt
+  } catch (err) {
+    const formattedError: IError = formatError(err)
+    log.debug(JSON.stringify(formattedError, null, 2))
+    throw formatError
+  }
 }

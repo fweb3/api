@@ -1,11 +1,15 @@
 import { attemptTransactionWithGas } from './transact'
-import { BigNumber, ethers } from 'ethers'
+import { formatError, IError } from './errors'
+import { BigNumber, ContractReceipt, ContractTransaction, ethers } from 'ethers'
 import { getPrivk, getProvider, Provider } from './interfaces'
 import { loadAbi, getContractAddress } from './contracts'
 import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
 
-export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
+export const useFweb3Faucet = async ({
+  network,
+  account,
+}: IFaucetBody): Promise<ContractReceipt> => {
   log.debug(`[+] Initializing fweb3 faucet request on ${network}`)
   const privk: string = getPrivk(network.toString())
 
@@ -54,27 +58,38 @@ export const useFweb3Faucet = async ({ network, account }: IFaucetBody) => {
     )
   }
 }
-
+// Need catch to format local errors
 const _developmentTransaction = async (
   tokenContract: ethers.Contract,
   faucetContract: ethers.Contract,
   account: string
 ) => {
-  log.debug('[+] Running tx without gas estimator')
-  const tx = await faucetContract.dripFweb3(account)
-  const receipt = await tx.wait()
+  try {
+    log.debug('[+] Running fweb3 faucet without gas estimator')
 
-  const fweb3FaucetBalance: BigNumber = await tokenContract.balanceOf(
-    faucetContract.address
-  )
+    const tx: ContractTransaction = await faucetContract.drip(account)
+    const receipt: ContractReceipt = await tx.wait()
 
-  log.debug({
-    sent_fweb3_to: account,
-    fweb3_faucet_balance: fweb3FaucetBalance.toString(),
-    tx: receipt.transactionHash,
-  })
+    const dripAmount: BigNumber = await faucetContract.dripAmount()
+    const fweb3FaucetBalance: BigNumber = await tokenContract.balanceOf(
+      faucetContract.address
+    )
 
-  return receipt
+    log.debug({
+      sent_fweb3_to: account,
+      drip_amount: ethers.utils.formatEther(dripAmount.toString()),
+      fweb3_faucet_balance: ethers.utils.formatEther(
+        fweb3FaucetBalance.toString()
+      ),
+      tx: receipt.transactionHash,
+    })
+
+    return receipt
+  } catch (err) {
+    const formattedError: IError = formatError(err)
+    log.debug(JSON.stringify(formattedError, null, 2))
+    throw formattedError
+  }
 }
 
 const _gasEstimateTransaction = async (
@@ -83,13 +98,13 @@ const _gasEstimateTransaction = async (
   contract: ethers.Contract,
   account: string,
   fweb3TokenContract: ethers.Contract
-) => {
-  log.debug('[+] Running tx with gas estimator')
+): Promise<ContractReceipt> => {
+  log.debug('[+] Running fweb3 faucet with gas estimator')
 
-  const receipt = await attemptTransactionWithGas(
+  const receipt: Promise<ContractReceipt> = await attemptTransactionWithGas(
     network,
     provider,
-    contract.dripFweb3,
+    contract.drip,
     account.toString()
   )
 
