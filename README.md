@@ -13,3 +13,27 @@ Development
 ```
 ADMIN_ROLE_HASH: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
 ```
+
+## API
+
+```bash
+# Get current balance for network.
+
+curl --location --request GET 'https://fweb3-api.herokuapp.com/api/balances?network=polygon|mumbai' \
+--header 'Authorization: Bearer foobar'
+
+# Response
+{
+    "fweb3": {
+        "token_balance": "0.0",
+        "matic_balance": "0.0",
+        "drip_amount": "300.0"
+    },
+    "matic": {
+        "matic_balance": "0.0",
+        "drip_amount": "0.05"
+    }
+}
+
+
+```
