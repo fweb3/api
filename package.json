@@ -20,7 +20,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "build": "tsc -p tsconfig-build.json",
+    "build": "tsc -p tsconfig.json",
     "build:clean": "rm -rf dist && npm run build",
     "lint": "eslint .",
     "pretty": "prettier --check .",
