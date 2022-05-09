@@ -8,6 +8,13 @@ export const fetchNormalTransactions = async (
   return fetcher(polygonUrl(network, account, 'txlist'))
 }
 
+export const fetchInternalTransactions = async (
+  network: string,
+  account: string
+) => {
+  return fetcher(polygonUrl(network, account, 'txlistinternal'))
+}
+
 export const fetchERC20TransferEvents = async (
   network: string,
   account: string,
@@ -15,7 +22,6 @@ export const fetchERC20TransferEvents = async (
 ) => {
   const url = polygonUrl(network, account, 'tokentx')
   const newurl = `${url}&contractaddress=${contractAddress}`
-  console.log(newurl)
   return fetcher(newurl)
 }
 
@@ -24,7 +30,7 @@ export const fetcher = async (url) => {
     const res = await fetch(url)
     const json = await res.json()
     return json
-  } catch (err) {
-    console.error(err)
+  } catch (error) {
+    console.error({ error })
   }
 }

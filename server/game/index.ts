@@ -1,1 +1,1 @@
-export { fetchGameStateForAccount } from './gameState'
+export { calculateGameState } from './tasks'

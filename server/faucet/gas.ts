@@ -40,7 +40,7 @@ export const getGasPrices = async ({
 
 const _createPriceArray = (gasEstimate: number): number[] => {
   const prices: number[] = []
-  Array(4)
+  Array(6)
     .fill(gasEstimate)
     .reduce((acc, cur) => {
       if (!acc) {

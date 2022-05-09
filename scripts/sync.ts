@@ -4,7 +4,7 @@ const CONTRACT_REPO_DIR = '../fweb3-contracts'
 const CONTRACT_ADDRESSES_DIR = `${CONTRACT_REPO_DIR}/deploy_addresses`
 const CONTRACT_INTERFACES_DIR = `${CONTRACT_REPO_DIR}/deploy_interfaces`
 
-const SYNC_BASE_DIR = 'server/faucet/contracts'
+const SYNC_BASE_DIR = 'server/contracts'
 const SYNC_ADDRESS_DIR = `${SYNC_BASE_DIR}/addresses`
 const SYNC_INTERFACE_DIR = `${SYNC_BASE_DIR}/abi`
 

@@ -1,3 +1,4 @@
+import { calculateGameState } from './game/tasks'
 import { log } from './logger'
 import { ISuccessfulDrip } from './faucet/request'
 import { processCommand } from './discord/commands'
@@ -7,12 +8,11 @@ import {
   fetchBalances,
   fetchCurrentFaucetState,
 } from './faucet'
-import { fetchGameStateForAccount } from './game'
 
 export const gameController = async (req: Request, res: Response) => {
   try {
     const { network, account } = req.query
-    const payload = await fetchGameStateForAccount(
+    const payload = await calculateGameState(
       network.toString(),
       account.toString()
     )
