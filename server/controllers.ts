@@ -7,6 +7,20 @@ import {
   fetchBalances,
   fetchCurrentFaucetState,
 } from './faucet'
+import { fetchGameStateForAccount } from './game'
+
+export const gameController = async (req: Request, res: Response) => {
+  try {
+    const { network, account } = req.query
+    const payload = await fetchGameStateForAccount(
+      network.toString(),
+      account.toString()
+    )
+    res.status(200).json(payload)
+  } catch (err) {
+    res.status(500).json(err)
+  }
+}
 
 export const faucetController = async (req: Request, res: Response) => {
   try {

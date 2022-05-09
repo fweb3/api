@@ -1,4 +1,4 @@
-import { IFweb3Interfaces } from './interfaces'
+import { IFweb3Interfaces } from '../interfaces'
 import { ethers } from 'ethers'
 import fetch from 'node-fetch'
 import { log } from '../logger'

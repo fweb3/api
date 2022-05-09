@@ -1,7 +1,7 @@
 import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { Contract, ethers, Wallet } from 'ethers'
-import { getContractAddress, loadAbi } from './contracts'
-import { log } from '../logger'
+import { getContractAddress, loadAbi } from './faucet/contracts'
+import { log } from './logger'
 
 const {
   LOCAL_PRIVK,

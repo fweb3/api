@@ -1,4 +1,4 @@
-import { IFweb3Interfaces } from './interfaces'
+import { IFweb3Interfaces } from '../interfaces'
 import { ethers } from 'ethers'
 import { formatError } from './errors'
 import { getGasPrices } from './gas'

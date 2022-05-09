@@ -1,7 +1,7 @@
 import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ContractReceipt, ContractTransaction, ethers } from 'ethers'
 import { formatError, IError } from './errors'
-import { getFweb3Interfaces, IFweb3Interfaces } from './interfaces'
+import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
 

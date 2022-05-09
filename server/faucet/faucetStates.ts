@@ -1,5 +1,5 @@
 import { Contract, ethers } from 'ethers'
-import { getFweb3Interfaces, IFweb3Interfaces } from './interfaces'
+import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { fetchFaucetBalances } from './balances'
 
 export const fetchCurrentFaucetState = async (network: string) => {

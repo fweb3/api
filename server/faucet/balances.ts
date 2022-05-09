@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { getFweb3Interfaces, IFweb3Interfaces } from './interfaces'
+import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
 
 const ALLOWED_NETWORKS = ['localhost', 'mumbai', 'polygon']
