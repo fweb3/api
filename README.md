@@ -16,13 +16,19 @@ ADMIN_ROLE_HASH: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21
 
 ## API
 
-```bash
-# Get current balance for network.
+note: CORs and access keys are enabled.
 
-curl --location --request GET 'https://fweb3-api.herokuapp.com/api/balances?network=polygon|mumbai' \
+```bash
+# Get current state of both faucets.
+curl --location --request GET 'https://fweb3-api.herokuapp.com/api/faucet?network=<polygon|mumbai>' \
 --header 'Authorization: Bearer foobar'
 
-# Response
+# Get current faucet balances for a network.
+# Ex. Request
+curl --location --request GET 'https://fweb3-api.herokuapp.com/api/balances?network=<polygon|mumbai>' \
+--header 'Authorization: Bearer foobar'
+
+# Ex. Response
 {
     "fweb3": {
         "token_balance": "0.0",
@@ -34,6 +40,5 @@ curl --location --request GET 'https://fweb3-api.herokuapp.com/api/balances?netw
         "drip_amount": "0.05"
     }
 }
-
 
 ```
