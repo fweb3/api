@@ -34,7 +34,6 @@ const _contractSharedState = async (contract: Contract) => {
   const timeout = await contract.timeout()
   const singleUse = await contract.singleUse()
   const holderLimit = await contract.holderLimit()
-  const useHolderLimit = await contract.useHolderLimit()
   return {
     dripAmount: ethers.utils.formatEther(dripAmount.toString()),
     dripDecimals: dripDecimals.toNumber(),
@@ -42,7 +41,6 @@ const _contractSharedState = async (contract: Contract) => {
     timeout: timeout.toNumber(),
     singleUse,
     holderLimit: ethers.utils.formatEther(holderLimit.toString()),
-    useHolderLimit,
     dripBase: dripBase.toNumber(),
   }
 }

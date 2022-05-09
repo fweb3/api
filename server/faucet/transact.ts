@@ -35,8 +35,8 @@ export const attemptTransactionWithGas = async (
       const tx = await contractToCall.drip(address)
       return tx.wait()
     } catch (err) {
+      log.debug(JSON.stringify(err))
       const formattedError = formatError(err)
-      log.debug(JSON.stringify(formattedError))
       const isGasRelated = formattedError.type.includes('GAS')
       if (isGasRelated) {
         await waitFor(1000)
