@@ -15,5 +15,5 @@
     "typeRoots": ["node_modules/@types", "server/**/*.d.ts"]
   },
   "include": ["server/**/*"],
-  "exclude": ["tmp/**/*", "dist", "**/*.json"]
+  "exclude": ["tmp/**/*", "dist"]
 }
