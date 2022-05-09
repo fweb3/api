@@ -14,7 +14,8 @@
     "url": "https://github.com/fweb3/api/issues",
     "email": "dont@email.me"
   },
-  "main": "dist/app.js",
+  "main": "dist/index",
+  "typings": "dist/index",
   "engines": {
     "node": "16.x"
   },
