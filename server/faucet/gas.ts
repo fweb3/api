@@ -1,14 +1,14 @@
-import { Provider } from './interfaces'
+import { IFweb3Interfaces } from './interfaces'
 import { ethers } from 'ethers'
 import fetch from 'node-fetch'
 import { log } from '../logger'
 
 const { GAS_LIMIT = 200000000000, GAS_MULTIPLIER = 0.2 } = process.env
 
-export const getGasPrices = async (
-  network: string,
-  provider: Provider
-): Promise<number[]> => {
+export const getGasPrices = async ({
+  network,
+  provider,
+}: IFweb3Interfaces): Promise<number[]> => {
   try {
     log.debug('[+] Fetching gas estimate...')
     const gasRes = await _fetchGasEstimate(network)

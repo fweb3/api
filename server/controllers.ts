@@ -1,7 +1,12 @@
+import { log } from './logger'
 import { ISuccessfulDrip } from './faucet/request'
 import { processCommand } from './discord/commands'
 import { Request, Response } from 'express'
-import { fetchFaucetBalances, requestDripFromFaucet } from './faucet'
+import {
+  requestDripFromFaucet,
+  fetchBalances,
+  fetchCurrentFaucetState,
+} from './faucet'
 
 export const faucetController = async (req: Request, res: Response) => {
   try {
@@ -14,11 +19,34 @@ export const faucetController = async (req: Request, res: Response) => {
 
 export const balanceController = async (req: Request, res: Response) => {
   try {
+    const { network, address } = req.query
+    const payload = await fetchBalances(
+      network?.toString(),
+      address?.toString() || ''
+    )
+    return res.status(200).json(payload)
+  } catch (err) {
+    log.error(JSON.stringify(err))
+    const errorPayload = {
+      status: 'error',
+      message: err.message,
+    }
+    res.status(500).json(errorPayload)
+  }
+}
+
+export const faucetStateController = async (req: Request, res: Response) => {
+  try {
     const { network } = req.query
-    const payload = await fetchFaucetBalances(network.toString())
-    res.status(200).json(payload)
-  } catch (formattedError: unknown) {
-    res.status(500).json(formattedError)
+    const payload = await fetchCurrentFaucetState(network?.toString())
+    return res.status(200).json(payload)
+  } catch (err) {
+    log.error(JSON.stringify(err))
+    const errorPayload = {
+      status: 'error',
+      message: err.message,
+    }
+    res.status(500).json(errorPayload)
   }
 }
 

@@ -1,69 +1,38 @@
-import { formatError, IError } from './errors'
 import { attemptTransactionWithGas } from './transact'
-import { getPrivk, getProvider, Provider } from './interfaces'
-import { loadAbi, getContractAddress } from './contracts'
-import type { IFaucetBody } from './faucet'
+import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers'
+import { formatError, IError } from './errors'
+import { getFweb3Interfaces, IFweb3Interfaces } from './interfaces'
 import { log } from '../logger'
-import {
-  BigNumber,
-  ContractReceipt,
-  ContractTransaction,
-  ethers,
-  Wallet,
-} from 'ethers'
+import type { IFaucetBody } from './faucet'
 
 export const useMaticFaucet = async ({
   network,
   account,
 }: IFaucetBody): Promise<ContractReceipt> => {
   log.debug(`[+] Initializing matic faucet request on ${network}`)
-  const privk: string = getPrivk(network.toString())
 
-  if (!privk) {
-    throw new Error('cannot load wallet')
-  }
-
-  const provider: Provider = await getProvider(network.toString())
-  const wallet: Wallet = new ethers.Wallet(privk || '', provider)
-
-  const maticFaucetAddress: string = getContractAddress(
-    network.toString(),
-    'fweb3MaticFaucet'
-  )
-
-  const maticFaucetAbi: string = loadAbi('fweb3MaticFaucet')
-  const maticFaucetContract = new ethers.Contract(
-    maticFaucetAddress,
-    maticFaucetAbi,
-    wallet
-  )
+  const fweb3Interfaces = await getFweb3Interfaces(network)
 
   if (network === 'localhost') {
-    return _localTransaction(provider, maticFaucetContract, account.toString())
+    return _localTransaction(fweb3Interfaces, account)
   } else {
-    return _gasEstimatedTransaction(
-      network,
-      provider,
-      maticFaucetContract,
-      account.toString()
-    )
+    return _gasEstimatedTransaction(fweb3Interfaces, account)
   }
 }
 
 const _gasEstimatedTransaction = async (
-  network: string,
-  provider: Provider,
-  contract: ethers.Contract,
+  interfaces: IFweb3Interfaces,
   account: string
 ): Promise<ContractReceipt> => {
+  const { provider, maticFaucet }: IFweb3Interfaces = interfaces
+
   const receipt: ContractReceipt = await attemptTransactionWithGas(
-    network,
-    provider,
-    contract.drip,
-    account
+    interfaces,
+    account,
+    'matic'
   )
 
-  const endBalance: BigNumber = await provider.getBalance(contract.address)
+  const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
 
   log.debug({
     sent_matic_to: account,
@@ -75,15 +44,14 @@ const _gasEstimatedTransaction = async (
 }
 
 const _localTransaction = async (
-  provider: Provider,
-  contract: ethers.Contract,
+  { maticFaucet, provider }: IFweb3Interfaces,
   account: string
 ): Promise<ContractReceipt> => {
   try {
-    const tx: ContractTransaction = await contract.drip(account)
+    const tx: ContractTransaction = await maticFaucet.drip(account)
     const receipt: ContractReceipt = await tx.wait()
 
-    const endBalance: BigNumber = await provider.getBalance(contract.address)
+    const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
 
     log.debug({
       sent_matic_to: account,

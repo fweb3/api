@@ -1,7 +1,7 @@
+import { IFweb3Interfaces } from './interfaces'
 import { ethers } from 'ethers'
 import { formatError } from './errors'
 import { getGasPrices } from './gas'
-import type { Provider } from './interfaces'
 import { log } from '../logger'
 
 const { GAS_LIMIT = 200000000000 } = process.env
@@ -14,21 +14,25 @@ const waitFor = (ms) => {
 }
 
 export const attemptTransactionWithGas = async (
-  network: string,
-  provider: Provider,
-  faucetMethod,
-  address: string
+  interfaces: IFweb3Interfaces,
+  address: string,
+  type: string
 ) => {
+  const contractToCall =
+    type === 'matic' ? interfaces.maticFaucet : interfaces.fweb3Faucet
+
   log.debug('[+] Getting current gas prices')
-  const prices = await getGasPrices(network, provider)
+  const prices = await getGasPrices(interfaces)
+
   log.debug(`[+] Got prices [${prices}]`)
   const gasLimitGwei = ethers.utils.parseUnits(GAS_LIMIT?.toString(), 'gwei')
+
   log.debug(`[+] Gas limit set to: [${gasLimitGwei}]`)
 
   for (let i = 0; i < prices.length; i++) {
     try {
       log.debug(`[+] Trying gas price [${prices[i]}]`)
-      const tx = await faucetMethod(address)
+      const tx = await contractToCall.drip(address)
       return tx.wait()
     } catch (err) {
       const formattedError = formatError(err)
