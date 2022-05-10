@@ -28,10 +28,12 @@ export const fetchERC20TransferEvents = async (
 export const fetchERC721TransferEvents = async (
   network: string,
   account: string,
-  contractAddress: string
+  contractAddress?: string
 ) => {
   const baseUrl = polygonUrl(network, account, 'tokennfttx')
-  const url = `${baseUrl}&contractaddress=${contractAddress}`
+  const url = contractAddress
+    ? `${baseUrl}&contractaddress=${contractAddress}`
+    : baseUrl
   return fetcher(url)
 }
 
