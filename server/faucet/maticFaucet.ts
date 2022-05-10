@@ -31,7 +31,9 @@ const _gasEstimatedTransaction = async (
     account,
     'matic'
   )
-
+  if (!receipt) {
+    throw formatError('')
+  }
   const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
 
   log.debug({
@@ -50,6 +52,10 @@ const _localTransaction = async (
   try {
     const tx: ContractTransaction = await maticFaucet.drip(account)
     const receipt: ContractReceipt = await tx.wait()
+
+    if (!receipt) {
+      throw formatError('')
+    }
 
     const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
 

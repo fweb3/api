@@ -3,7 +3,7 @@ import { ethers } from 'ethers'
 import fetch from 'node-fetch'
 import { log } from '../logger'
 
-const { GAS_LIMIT = 200000000000, GAS_MULTIPLIER = 0.2 } = process.env
+const { GAS_LIMIT = 250000000000000000, GAS_MULTIPLIER = 0.2 } = process.env
 
 export const getGasPrices = async ({
   network,
@@ -31,7 +31,7 @@ export const getGasPrices = async ({
 
     return _createPriceArray(convertedEstimateInWei)
   } catch (err) {
-    log.error(err)
+    log.error({ err })
     const { gasPrice } = await provider.getFeeData()
     const prices = _createPriceArray(gasPrice?.toNumber() || 0)
     return prices ?? [parseInt(GAS_LIMIT.toString())]
@@ -40,7 +40,7 @@ export const getGasPrices = async ({
 
 const _createPriceArray = (gasEstimate: number): number[] => {
   const prices: number[] = []
-  Array(6)
+  Array(4)
     .fill(gasEstimate)
     .reduce((acc, cur) => {
       if (!acc) {

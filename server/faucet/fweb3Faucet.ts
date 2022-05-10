@@ -27,7 +27,9 @@ const _developmentTransaction = async (
 
     const tx: ContractTransaction = await fweb3Faucet.drip(account)
     const receipt: ContractReceipt = await tx.wait()
-
+    if (!receipt) {
+      throw formatError('')
+    }
     const dripAmount: BigNumber = await fweb3Faucet.dripAmount()
     const fweb3FaucetBalance: BigNumber = await fweb3Faucet.balanceOf(
       fweb3Faucet.address
@@ -61,7 +63,9 @@ const _gasEstimateTransaction = async (
     address,
     'fweb3'
   )
-
+  if (!receipt) {
+    throw formatError('')
+  }
   const fweb3FaucetBalance: BigNumber =
     await fweb3Interface.fweb3Token.balanceOf(fweb3Interface.fweb3Token.address)
 

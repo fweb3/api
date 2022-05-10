@@ -28,17 +28,20 @@ export const attemptTransactionWithGas = async (
   const gasLimitGwei = ethers.utils.parseUnits(GAS_LIMIT?.toString(), 'gwei')
 
   log.debug(`[+] Gas limit set to: [${gasLimitGwei}]`)
-
+  let lastError
   for (let i = 0; i < prices.length; i++) {
     try {
       log.debug(`[+] Trying gas price [${prices[i]}]`)
-      const tx = await contractToCall.drip(address)
+      const tx = await contractToCall.drip(address, {
+        gasPrice: prices[i],
+      })
       return tx.wait()
     } catch (err) {
       const formattedError = formatError(err)
       const isGasRelated = formattedError.type.includes('GAS')
       if (isGasRelated && i !== prices.length) {
-        await waitFor(1000)
+        await waitFor(500)
+        lastError = formattedError
         continue
       } else {
         log.debug(JSON.stringify(err))
@@ -46,4 +49,5 @@ export const attemptTransactionWithGas = async (
       }
     }
   }
+  throw lastError
 }
