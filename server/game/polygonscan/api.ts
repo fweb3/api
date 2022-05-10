@@ -20,17 +20,23 @@ export const fetchERC20TransferEvents = async (
   account: string,
   contractAddress: string
 ) => {
-  const url = polygonUrl(network, account, 'tokentx')
-  const newurl = `${url}&contractaddress=${contractAddress}`
-  return fetcher(newurl)
+  const baseUrl = polygonUrl(network, account, 'tokentx')
+  const url = `${baseUrl}&contractaddress=${contractAddress}`
+  return fetcher(url)
+}
+
+export const fetchERC721TransferEvents = async (
+  network: string,
+  account: string,
+  contractAddress: string
+) => {
+  const baseUrl = polygonUrl(network, account, 'tokennfttx')
+  const url = `${baseUrl}&contractaddress=${contractAddress}`
+  return fetcher(url)
 }
 
 export const fetcher = async (url) => {
-  try {
-    const res = await fetch(url)
-    const json = await res.json()
-    return json
-  } catch (error) {
-    console.error({ error })
-  }
+  const res = await fetch(url)
+  const json = await res.json()
+  return json
 }

@@ -9,8 +9,8 @@
     "outDir": "dist",
     "baseUrl": ".",
     "resolveJsonModule": true,
-    "typeRoots": ["node_modules/@types", "./server/**/*.d.ts"]
+    "typeRoots": ["node_modules/@types", "server/**/*.d.ts"]
   },
-  "include": ["./server/**/*", "./server/**/*.json", "tmp/backups"],
-  "exclude": ["./tmp/**/*", "./dist", "**/*.test.ts"]
+  "include": ["server/**/*"],
+  "exclude": ["tmp", "./dist", "**/*.test.ts"]
 }

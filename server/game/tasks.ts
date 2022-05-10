@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import {
   fetchERC20TransferEvents,
   fetchInternalTransactions,
+  fetchERC721TransferEvents,
 } from './polygonscan'
 import type { IPolygonResponse, IPolygonResult } from './polygonscan/types'
 // use fweb3 faucet ✅
@@ -28,12 +29,25 @@ const DEFAULT_STATE = {
 }
 
 export const calculateGameState = async (network: string, account: string) => {
-  const internalRelatedState = await internalTxRelated(network, account)
-  const erc20TransferRelatedState = await erc20TransferRelated(network, account)
-  return {
-    ...DEFAULT_STATE,
-    ...internalRelatedState,
-    ...erc20TransferRelatedState,
+  try {
+    const internalRelatedState = await internalTxRelated(network, account)
+    const erc20TransferRelatedState = await erc20TransferRelated(
+      network,
+      account
+    )
+    const erc721TransferRelatedState = await erc721TokenTransferRelated(
+      network,
+      account
+    )
+    return {
+      ...DEFAULT_STATE,
+      ...internalRelatedState,
+      ...erc20TransferRelatedState,
+      result: erc721TransferRelatedState,
+    }
+  } catch (err) {
+    console.log('error')
+    console.log({ err })
   }
 }
 
@@ -66,6 +80,16 @@ export const erc20TransferRelated = async (
     hasUsedFweb3Faucet,
     hasSentTokens,
   }
+}
+
+const erc721TokenTransferRelated = async (network: string, account: string) => {
+  const fweb3DiamondNFTAddress = getContractAddress(network, 'fweb3DiamondNft')
+  const { result }: IPolygonResponse = await fetchERC721TransferEvents(
+    network,
+    account,
+    fweb3DiamondNFTAddress
+  )
+  return result
 }
 
 const checkHasUsedFweb3Faucet = async (
@@ -108,4 +132,8 @@ const checkHasSentFweb3 = async (account: string, result: IPolygonResult[]) => {
       return isFrom && sentEnough
     }).length !== 0
   )
+}
+
+const checkHasMintedDiamondNFT = async (account) => {
+  // make lint happy
 }
