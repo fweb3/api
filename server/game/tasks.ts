@@ -136,4 +136,5 @@ const checkHasSentFweb3 = async (account: string, result: IPolygonResult[]) => {
 
 const checkHasMintedDiamondNFT = async (account) => {
   // make lint happy
+  return false
 }
