@@ -1,4 +1,4 @@
-import { ERRORS, hasGasRelatedError } from './errors'
+import { ERRORS, hasGasRelatedError } from '../errors/faucetErrors'
 import { ethers } from 'ethers'
 import { getGasPrices } from './gas'
 import { IFweb3Interfaces } from '../interfaces'

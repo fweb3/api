@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
-import { ERRORS } from './errors'
+import { ERRORS } from '../errors/faucetErrors'
 
 const ALLOWED_NETWORKS = ['localhost', 'mumbai', 'polygon']
 

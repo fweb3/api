@@ -1,4 +1,4 @@
 export { fetchBalances } from './balances'
 export { fetchCurrentFaucetState } from './faucetStates'
-export { formatError } from './errors'
+export { formatFaucetErrors as formatError } from '../errors/faucetErrors'
 export { requestDripFromFaucet } from './request'

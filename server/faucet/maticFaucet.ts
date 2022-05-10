@@ -1,6 +1,6 @@
 import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers'
-import { ERRORS } from './errors'
+import { ERRORS } from '../errors/faucetErrors'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
@@ -10,7 +10,6 @@ export const useMaticFaucet = async ({
   account,
 }: IFaucetBody): Promise<ContractReceipt> => {
   log.debug(`[+] Initializing matic faucet request on ${network}`)
-
   const fweb3Interfaces = await getFweb3Interfaces(network)
 
   if (network === 'localhost') {

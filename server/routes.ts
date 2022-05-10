@@ -8,6 +8,7 @@ import {
   discordPostCommands,
   faucetStateController,
   gameController,
+  awardController,
 } from './controllers'
 
 export const routes = (app) => {
@@ -24,6 +25,7 @@ export const routes = (app) => {
   app.delete('/bots/discord/commands', discordDeleteCommands)
 
   app.get('/api/game', gameController)
+  app.post('/api/game', awardController)
   app.post('/api/faucet', faucetController)
   app.get('/api/faucet', faucetStateController)
   app.get('/api/balances', balanceController)

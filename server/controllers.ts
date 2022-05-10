@@ -1,5 +1,6 @@
-import { formatError } from './faucet/errors'
-import { calculateGameState } from './game/tasks'
+import { formatGameErrors } from './errors/gameErrors'
+import { formatFaucetErrors } from './errors/faucetErrors'
+import { calculateGameState, confirmAndAwardWinner } from './game'
 import { log } from './logger'
 import { processCommand } from './discord/commands'
 import { Request, Response } from 'express'
@@ -28,11 +29,12 @@ export const faucetController = async (req: Request, res: Response) => {
     const receipt: ContractReceipt = await requestDripFromFaucet(req.body)
     res.status(200).json({
       status: 'success',
-      transaction_hash: receipt.transactionHash,
-      raw_receipt: receipt,
+      transaction_hash: JSON.stringify(receipt?.transactionHash),
+      raw_receipt: JSON.stringify(receipt),
     })
   } catch (err) {
-    const formattedError = formatError(err)
+    log.debug({ err })
+    const formattedError = formatFaucetErrors(err)
     res.status(500).json(formattedError)
   }
 }
@@ -65,6 +67,16 @@ export const faucetStateController = async (req: Request, res: Response) => {
       status: 'error',
       message: err.message,
     }
+    res.status(500).json(errorPayload)
+  }
+}
+
+export const awardController = async (req: Request, res: Response) => {
+  try {
+    const payload = await confirmAndAwardWinner(req.body)
+    return res.status(200).json(payload)
+  } catch (err) {
+    const errorPayload = formatGameErrors(err)
     res.status(500).json(errorPayload)
   }
 }
