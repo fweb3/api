@@ -10,6 +10,7 @@ import {
   fetchERC20TransferEvents,
   fetchInternalTransactions,
   fetchERC721TransferEvents,
+  fetchNormalTransactions,
 } from './polygonscan'
 
 // use fweb3 faucet ✅
@@ -18,7 +19,7 @@ import {
 // mint fweb3 nft ✅
 // burn 1 fweb3 ✅
 // swap fweb3 ✅
-// vote on fweb3 poll
+// vote on fweb3 poll ✅
 // write and deploy contract
 
 const DEFAULT_STATE = {
@@ -35,6 +36,7 @@ const DEFAULT_STATE = {
 }
 
 export const calculateGameState = async (network: string, account: string) => {
+  const normalTxRelatedState = await normalTxRelated(network, account)
   const internalRelatedState = await internalTxRelated(network, account)
   const erc20TransferRelatedState = await erc20TransferRelated(network, account)
   const erc721TransferRelatedState = await erc721TokenTransferRelated(
@@ -46,6 +48,7 @@ export const calculateGameState = async (network: string, account: string) => {
     ...internalRelatedState,
     ...erc20TransferRelatedState,
     ...erc721TransferRelatedState,
+    ...normalTxRelatedState,
   }
   // If in dev set swapped to true
   // there is no testnet swap for polygon
@@ -58,6 +61,16 @@ export const calculateGameState = async (network: string, account: string) => {
   return state
 }
 
+const normalTxRelated = async (network: string, account: string) => {
+  const { result }: IPolygonResponse = await fetchNormalTransactions(
+    network,
+    account
+  )
+  const hasVotedInPoll = await checkHasVotedInPoll(network, result)
+  return {
+    hasVotedInPoll,
+  }
+}
 const internalTxRelated = async (network: string, account: string) => {
   const { result }: IPolygonResponse = await fetchInternalTransactions(
     network,
@@ -179,6 +192,21 @@ const checkHasSwappedTokens = async (results: IPolygonResult[]) => {
   return (
     results?.filter((tx) => {
       return _lower(tx.to) === _lower(SWAP_ROUTER_V2)
+    }).length !== 0
+  )
+}
+
+const checkHasVotedInPoll = async (
+  network: string,
+  results: IPolygonResult[]
+) => {
+  const originalPollAddress = getContractAddress(network, 'originalFweb3Poll')
+  const fweb3Poll = getContractAddress(network, 'fweb3Poll')
+  return (
+    results?.filter((tx) => {
+      const votedInOriginalPoll = _lower(tx.to) === _lower(originalPollAddress)
+      const votedInFweb3Poll = _lower(tx.to) === _lower(fweb3Poll)
+      return votedInOriginalPoll || votedInFweb3Poll
     }).length !== 0
   )
 }
