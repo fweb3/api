@@ -17,7 +17,7 @@ import {
 // send 100 fweb3 ✅
 // mint fweb3 nft ✅
 // burn 1 fweb3 ✅
-// swap fweb3
+// swap fweb3 ✅
 // vote on fweb3 poll
 // write and deploy contract
 
