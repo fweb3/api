@@ -12,6 +12,7 @@ import {
   fetchERC721TransferEvents,
   fetchNormalTransactions,
 } from './polygonscan'
+import fs from 'fs-extra'
 
 // use fweb3 faucet ✅
 // use matic faucet ✅
@@ -21,6 +22,10 @@ import {
 // swap fweb3 ✅
 // vote on fweb3 poll ✅
 // write and deploy contract
+
+const _write = (path: string, data: string) => {
+  fs.writeFileSync(path, data)
+}
 
 const DEFAULT_STATE = {
   hasUsedFweb3Faucet: false,
@@ -66,9 +71,12 @@ const normalTxRelated = async (network: string, account: string) => {
     network,
     account
   )
+
   const hasVotedInPoll = await checkHasVotedInPoll(network, result)
+  const hasDeployedContract = await checkHasDeployedContract(result)
   return {
     hasVotedInPoll,
+    hasDeployedContract,
   }
 }
 const internalTxRelated = async (network: string, account: string) => {
@@ -76,6 +84,7 @@ const internalTxRelated = async (network: string, account: string) => {
     network,
     account
   )
+
   const hasUsedMaticFaucet = await checkHasUsedMaticFaucet(network, result)
   const hasSwappedTokens = await checkHasSwappedTokens(result)
   return {
@@ -107,6 +116,8 @@ const erc721TokenTransferRelated = async (network: string, account: string) => {
     network,
     account
   )
+  _write('erc721_transfer', JSON.stringify(result, null, 2))
+
   const hasMintedDiamondNFT = await checkHasMintedDiamondNFT(network, result)
   return {
     hasMintedDiamondNFT,
@@ -209,6 +220,10 @@ const checkHasVotedInPoll = async (
       return votedInOriginalPoll || votedInFweb3Poll
     }).length !== 0
   )
+}
+
+const checkHasDeployedContract = (result: IPolygonResult[]) => {
+  return result?.filter((tx) => _lower(tx.to) === '').length !== 0
 }
 
 const _lower = (str) => str.toLowerCase()

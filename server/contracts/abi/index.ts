@@ -4,6 +4,7 @@ import fweb3MaticFaucetInterface from './fweb3MaticFaucet.json'
 import fweb3TokenInterface from './fweb3Token.json'
 import fweb3DiamonNftInterface from './fweb3DiamondNFT.json'
 import fweb3PollInterface from './fweb3Poll.json'
+import fweb3GameInterface from './fweb3Game.json'
 import originalDiamondNftInterface from './original_fweb3Diamond.json'
 import originalFweb3PollInterface from './original_fweb3Poll.json'
 interface IMap {
@@ -16,6 +17,7 @@ const INTERFACE_MAP: IMap = {
   fweb3Token: fweb3TokenInterface,
   fweb3DiamondNft: fweb3DiamonNftInterface,
   fweb3Poll: fweb3PollInterface,
+  fweb3Game: fweb3GameInterface,
   originalFweb3DiamondNft: originalDiamondNftInterface,
   originalFweb3Poll: originalFweb3PollInterface,
 }
