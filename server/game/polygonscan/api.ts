@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import { polygonUrl } from './uris'
+import { parseResponse } from 'server/errors'
 
 export const fetchNormalTransactions = async (
   network: string,
@@ -12,7 +13,8 @@ export const fetchInternalTransactions = async (
   network: string,
   account: string
 ) => {
-  return fetcher(polygonUrl(network, account, 'txlistinternal'))
+  const res = await fetcher(polygonUrl(network, account, 'txlistinternal'))
+  return parseResponse(res)
 }
 
 export const fetchERC20TransferEvents = async (

@@ -14,7 +14,7 @@ Development
 ADMIN_ROLE_HASH: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775
 ```
 
-## API
+## Available Requests
 
 note: CORs and access keys are enabled.
 

@@ -1,4 +1,4 @@
-import { ERRORS } from './errors'
+import { ERRORS } from '../errors/faucetErrors'
 import { ethers } from 'ethers'
 import { IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'

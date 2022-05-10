@@ -1,6 +1,6 @@
 import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ContractReceipt, ContractTransaction, ethers } from 'ethers'
-import { ERRORS } from './errors'
+import { ERRORS } from '../errors/faucetErrors'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
@@ -19,7 +19,7 @@ export const useFweb3Faucet = async ({
 }
 
 const _developmentTransaction = async (
-  { fweb3Faucet }: IFweb3Interfaces,
+  { fweb3Faucet, fweb3Token }: IFweb3Interfaces,
   account: string
 ) => {
   log.debug('[+] Running fweb3 faucet without gas estimator')
@@ -30,7 +30,7 @@ const _developmentTransaction = async (
     throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
   const dripAmount: BigNumber = await fweb3Faucet.dripAmount()
-  const fweb3FaucetBalance: BigNumber = await fweb3Faucet.balanceOf(
+  const fweb3FaucetBalance: BigNumber = await fweb3Token.balanceOf(
     fweb3Faucet.address
   )
 

@@ -106,11 +106,11 @@ const ERROR_MAP: IError[] = [
 ]
 
 export const hasGasRelatedError = (err): boolean => {
-  const formattedError = formatError(err)
+  const formattedError = formatFaucetErrors(err)
   return formattedError.type.includes('GAS')
 }
 
-export const formatError = (err): IError => {
+export const formatFaucetErrors = (err): IError => {
   const possibleErrors = ERROR_MAP.filter((e) => err.message.includes(e.match))
   if (possibleErrors.length === 0) {
     return {

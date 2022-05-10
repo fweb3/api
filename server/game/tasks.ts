@@ -10,16 +10,8 @@ import {
   fetchERC20TransferEvents,
   fetchInternalTransactions,
   fetchERC721TransferEvents,
+  fetchNormalTransactions,
 } from './polygonscan'
-
-// use fweb3 faucet ✅
-// use matic faucet ✅
-// send 100 fweb3 ✅
-// mint fweb3 nft ✅
-// burn 1 fweb3 ✅
-// swap fweb3
-// vote on fweb3 poll
-// write and deploy contract
 
 const DEFAULT_STATE = {
   hasUsedFweb3Faucet: false,
@@ -35,6 +27,7 @@ const DEFAULT_STATE = {
 }
 
 export const calculateGameState = async (network: string, account: string) => {
+  const normalTxRelatedState = await normalTxRelated(network, account)
   const internalRelatedState = await internalTxRelated(network, account)
   const erc20TransferRelatedState = await erc20TransferRelated(network, account)
   const erc721TransferRelatedState = await erc721TokenTransferRelated(
@@ -46,6 +39,7 @@ export const calculateGameState = async (network: string, account: string) => {
     ...internalRelatedState,
     ...erc20TransferRelatedState,
     ...erc721TransferRelatedState,
+    ...normalTxRelatedState,
   }
   // If in dev set swapped to true
   // there is no testnet swap for polygon
@@ -58,11 +52,25 @@ export const calculateGameState = async (network: string, account: string) => {
   return state
 }
 
+const normalTxRelated = async (network: string, account: string) => {
+  const { result }: IPolygonResponse = await fetchNormalTransactions(
+    network,
+    account
+  )
+
+  const hasVotedInPoll = await checkHasVotedInPoll(network, result)
+  const hasDeployedContract = await checkHasDeployedContract(result)
+  return {
+    hasVotedInPoll,
+    hasDeployedContract,
+  }
+}
 const internalTxRelated = async (network: string, account: string) => {
   const { result }: IPolygonResponse = await fetchInternalTransactions(
     network,
     account
   )
+
   const hasUsedMaticFaucet = await checkHasUsedMaticFaucet(network, result)
   const hasSwappedTokens = await checkHasSwappedTokens(result)
   return {
@@ -94,6 +102,7 @@ const erc721TokenTransferRelated = async (network: string, account: string) => {
     network,
     account
   )
+
   const hasMintedDiamondNFT = await checkHasMintedDiamondNFT(network, result)
   return {
     hasMintedDiamondNFT,
@@ -175,12 +184,31 @@ const checkHasBurnedTokens = async (
   )
 }
 
-const checkHasSwappedTokens = async (results: IPolygonResult[]) => {
+const checkHasSwappedTokens = async (result: IPolygonResult[]) => {
   return (
-    results?.filter((tx) => {
+    result?.filter((tx) => {
       return _lower(tx.to) === _lower(SWAP_ROUTER_V2)
     }).length !== 0
   )
+}
+
+const checkHasVotedInPoll = async (
+  network: string,
+  result: IPolygonResult[]
+) => {
+  const originalPollAddress = getContractAddress(network, 'originalFweb3Poll')
+  const fweb3Poll = getContractAddress(network, 'fweb3Poll')
+  return (
+    result?.filter((tx) => {
+      const votedInOriginalPoll = _lower(tx.to) === _lower(originalPollAddress)
+      const votedInFweb3Poll = _lower(tx.to) === _lower(fweb3Poll)
+      return votedInOriginalPoll || votedInFweb3Poll
+    }).length !== 0
+  )
+}
+
+const checkHasDeployedContract = (result: IPolygonResult[]) => {
+  return result?.filter((tx) => _lower(tx.to) === '').length !== 0
 }
 
 const _lower = (str) => str.toLowerCase()
