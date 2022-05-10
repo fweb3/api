@@ -1,7 +1,8 @@
-import { IFweb3Interfaces } from '../interfaces'
+import { ERRORS } from './errors'
 import { ethers } from 'ethers'
-import fetch from 'node-fetch'
+import { IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
+import fetch from 'node-fetch'
 
 const { GAS_LIMIT = 250000000000000000, GAS_MULTIPLIER = 0.2 } = process.env
 
@@ -14,14 +15,14 @@ export const getGasPrices = async ({
     const gasRes = await _fetchGasEstimate(network)
 
     if (!gasRes.ok) {
-      throw new Error('try provider estimate')
+      throw new Error(ERRORS.ERROR_GETTING_ESTIMATED_GAS)
     }
 
     const {
       fast: { maxPriorityFee: gasEstimateGwei },
     } = await gasRes.json()
     if (!gasEstimateGwei) {
-      throw new Error('try provider estimate')
+      throw new Error(ERRORS.ERROR_GETTING_ESTIMATED_GAS)
     }
     const convertedEstimateInWei: number = ethers.utils
       .parseUnits(gasEstimateGwei.toFixed(5).toString(), 'gwei')
@@ -31,7 +32,7 @@ export const getGasPrices = async ({
 
     return _createPriceArray(convertedEstimateInWei)
   } catch (err) {
-    log.error({ err })
+    log.debug(`[-] ${err.message}`)
     const { gasPrice } = await provider.getFeeData()
     const prices = _createPriceArray(gasPrice?.toNumber() || 0)
     return prices ?? [parseInt(GAS_LIMIT.toString())]

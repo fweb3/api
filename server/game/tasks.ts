@@ -1,16 +1,16 @@
+import { ethers } from 'ethers'
+import type { IPolygonResponse, IPolygonResult } from './polygonscan/types'
 import {
   getContractAddress,
   GENESYS_ADDRESS,
   SWAP_ROUTER_V2,
   BURN_ADDRESS,
 } from '../contracts'
-import { ethers } from 'ethers'
 import {
   fetchERC20TransferEvents,
   fetchInternalTransactions,
   fetchERC721TransferEvents,
 } from './polygonscan'
-import type { IPolygonResponse, IPolygonResult } from './polygonscan/types'
 
 // use fweb3 faucet ✅
 // use matic faucet ✅
@@ -35,34 +35,27 @@ const DEFAULT_STATE = {
 }
 
 export const calculateGameState = async (network: string, account: string) => {
-  try {
-    const internalRelatedState = await internalTxRelated(network, account)
-    const erc20TransferRelatedState = await erc20TransferRelated(
-      network,
-      account
-    )
-    const erc721TransferRelatedState = await erc721TokenTransferRelated(
-      network,
-      account
-    )
-    const state = {
-      ...DEFAULT_STATE,
-      ...internalRelatedState,
-      ...erc20TransferRelatedState,
-      ...erc721TransferRelatedState,
-    }
-    // If in dev set swapped to true
-    // there is no testnet swap for polygon
-    if (network !== 'polygon') {
-      return {
-        ...state,
-        hasSwappedTokens: true,
-      }
-    }
-    return state
-  } catch (err) {
-    console.error({ err })
+  const internalRelatedState = await internalTxRelated(network, account)
+  const erc20TransferRelatedState = await erc20TransferRelated(network, account)
+  const erc721TransferRelatedState = await erc721TokenTransferRelated(
+    network,
+    account
+  )
+  const state = {
+    ...DEFAULT_STATE,
+    ...internalRelatedState,
+    ...erc20TransferRelatedState,
+    ...erc721TransferRelatedState,
   }
+  // If in dev set swapped to true
+  // there is no testnet swap for polygon
+  if (network !== 'polygon') {
+    return {
+      ...state,
+      hasSwappedTokens: true,
+    }
+  }
+  return state
 }
 
 const internalTxRelated = async (network: string, account: string) => {

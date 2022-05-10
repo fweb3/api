@@ -1,6 +1,6 @@
 import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers'
-import { formatError, IError } from './errors'
+import { ERRORS } from './errors'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
@@ -32,7 +32,7 @@ const _gasEstimatedTransaction = async (
     'matic'
   )
   if (!receipt) {
-    throw formatError('')
+    throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
   const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
 
@@ -49,26 +49,20 @@ const _localTransaction = async (
   { maticFaucet, provider }: IFweb3Interfaces,
   account: string
 ): Promise<ContractReceipt> => {
-  try {
-    const tx: ContractTransaction = await maticFaucet.drip(account)
-    const receipt: ContractReceipt = await tx.wait()
+  const tx: ContractTransaction = await maticFaucet.drip(account)
+  const receipt: ContractReceipt = await tx.wait()
 
-    if (!receipt) {
-      throw formatError('')
-    }
-
-    const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
-
-    log.debug({
-      sent_matic_to: account,
-      matic_faucet_end_balance: endBalance.toString(),
-      tx_receipt: receipt,
-    })
-
-    return receipt
-  } catch (err) {
-    const formattedError: IError = formatError(err)
-    log.debug(JSON.stringify(formattedError, null, 2))
-    throw formatError
+  if (!receipt) {
+    throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
+
+  const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
+
+  log.debug({
+    sent_matic_to: account,
+    matic_faucet_end_balance: endBalance.toString(),
+    tx_receipt: receipt,
+  })
+
+  return receipt
 }

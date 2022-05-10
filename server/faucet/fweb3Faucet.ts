@@ -1,6 +1,6 @@
 import { attemptTransactionWithGas } from './transact'
 import { BigNumber, ContractReceipt, ContractTransaction, ethers } from 'ethers'
-import { formatError, IError } from './errors'
+import { ERRORS } from './errors'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
 import type { IFaucetBody } from './faucet'
@@ -17,39 +17,33 @@ export const useFweb3Faucet = async ({
     return _gasEstimateTransaction(fweb3Interfaces, account)
   }
 }
-// Need try/catch to format local errors
+
 const _developmentTransaction = async (
   { fweb3Faucet }: IFweb3Interfaces,
   account: string
 ) => {
-  try {
-    log.debug('[+] Running fweb3 faucet without gas estimator')
+  log.debug('[+] Running fweb3 faucet without gas estimator')
 
-    const tx: ContractTransaction = await fweb3Faucet.drip(account)
-    const receipt: ContractReceipt = await tx.wait()
-    if (!receipt) {
-      throw formatError('')
-    }
-    const dripAmount: BigNumber = await fweb3Faucet.dripAmount()
-    const fweb3FaucetBalance: BigNumber = await fweb3Faucet.balanceOf(
-      fweb3Faucet.address
-    )
-
-    log.debug({
-      sent_fweb3_to: account,
-      drip_amount: ethers.utils.formatEther(dripAmount.toString()),
-      fweb3_faucet_balance: ethers.utils.formatEther(
-        fweb3FaucetBalance.toString()
-      ),
-      tx: receipt.transactionHash,
-    })
-
-    return receipt
-  } catch (err) {
-    const formattedError: IError = formatError(err)
-    log.debug(JSON.stringify(formattedError, null, 2))
-    throw formattedError
+  const tx: ContractTransaction = await fweb3Faucet.drip(account)
+  const receipt: ContractReceipt = await tx.wait()
+  if (!receipt) {
+    throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
+  const dripAmount: BigNumber = await fweb3Faucet.dripAmount()
+  const fweb3FaucetBalance: BigNumber = await fweb3Faucet.balanceOf(
+    fweb3Faucet.address
+  )
+
+  log.debug({
+    sent_fweb3_to: account,
+    drip_amount: ethers.utils.formatEther(dripAmount.toString()),
+    fweb3_faucet_balance: ethers.utils.formatEther(
+      fweb3FaucetBalance.toString()
+    ),
+    tx: receipt.transactionHash,
+  })
+
+  return receipt
 }
 
 const _gasEstimateTransaction = async (
@@ -64,7 +58,7 @@ const _gasEstimateTransaction = async (
     'fweb3'
   )
   if (!receipt) {
-    throw formatError('')
+    throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
   const fweb3FaucetBalance: BigNumber =
     await fweb3Interface.fweb3Token.balanceOf(fweb3Interface.fweb3Token.address)

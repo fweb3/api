@@ -1,8 +1,9 @@
+import { formatError } from './faucet/errors'
 import { calculateGameState } from './game/tasks'
 import { log } from './logger'
-import { ISuccessfulDrip } from './faucet/request'
 import { processCommand } from './discord/commands'
 import { Request, Response } from 'express'
+import { ContractReceipt } from 'ethers'
 import {
   requestDripFromFaucet,
   fetchBalances,
@@ -24,9 +25,14 @@ export const gameController = async (req: Request, res: Response) => {
 
 export const faucetController = async (req: Request, res: Response) => {
   try {
-    const payload: ISuccessfulDrip = await requestDripFromFaucet(req.body)
-    res.status(200).json(payload)
-  } catch (formattedError: unknown) {
+    const receipt: ContractReceipt = await requestDripFromFaucet(req.body)
+    res.status(200).json({
+      status: 'success',
+      transaction_hash: receipt.transactionHash,
+      raw_receipt: receipt,
+    })
+  } catch (err) {
+    const formattedError = formatError(err)
     res.status(500).json(formattedError)
   }
 }
@@ -55,7 +61,6 @@ export const faucetStateController = async (req: Request, res: Response) => {
     const payload = await fetchCurrentFaucetState(network?.toString())
     return res.status(200).json(payload)
   } catch (err) {
-    log.error(JSON.stringify(err))
     const errorPayload = {
       status: 'error',
       message: err.message,

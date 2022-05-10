@@ -1,9 +1,20 @@
+const { DEBUG_LOG = 'true' } = process.env
+
 export interface IError {
   status?: string
   type: string
   match?: string
   message: string
-  raw?: Record<string, unknown>
+  error?: string
+}
+
+export const ERRORS: Record<string, string> = {
+  INVALID_REQUEST_PARAMS: 'Invalid request params',
+  BAD_NETWORK_TYPE: 'Network is not supported',
+  NO_RECEIPT_ERROR: 'No receipt for tx. Try again in a few.',
+  ERROR_GENERIC: 'An unknown error occured',
+  EXAHUSTED_ATTEMPTS: 'All attempts to transact have failed. Try again',
+  ERROR_GETTING_ESTIMATED_GAS: 'Cannot estimate gas',
 }
 
 const ERROR_MAP: IError[] = [
@@ -83,31 +94,36 @@ const ERROR_MAP: IError[] = [
     message: 'Gas price too low.',
   },
   {
-    type: 'ERROR_TX_FAILED',
-    match: 'send failed',
-    message: 'TX failed to send.',
-  },
-  {
-    type: 'ERROR_EXECUTION_REVERTED',
-    match: 'may require manual gas limit',
-    message: 'Likely a contract related error occured.',
-  },
-  {
     type: 'ERROR_GENERIC',
-    match: '',
+    match: ERRORS.ERROR_GENERIC,
+    message: 'An unknown error occured.',
+  },
+  {
+    type: 'ERROR_NO_RECEIPT',
+    match: ERRORS.NO_RECEIPT_ERROR,
     message: 'An unknown error occured.',
   },
 ]
 
+export const hasGasRelatedError = (err): boolean => {
+  const formattedError = formatError(err)
+  return formattedError.type.includes('GAS')
+}
+
 export const formatError = (err): IError => {
   const possibleErrors = ERROR_MAP.filter((e) => err.message.includes(e.match))
-  if (possibleErrors.length === 1) {
-    return possibleErrors[0]
+  if (possibleErrors.length === 0) {
+    return {
+      status: 'error',
+      type: 'UNKNOWN_ERROR',
+      message: ERRORS.ERROR_GENERIC,
+      ...(DEBUG_LOG ? { error: err.message } : {}),
+    }
   }
   return {
     status: 'error',
     type: possibleErrors[0].type,
     message: possibleErrors[0].message,
-    raw: err,
+    ...(DEBUG_LOG ? { error: err.message } : {}),
   }
 }

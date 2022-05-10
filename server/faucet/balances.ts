@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
+import { ERRORS } from './errors'
 
 const ALLOWED_NETWORKS = ['localhost', 'mumbai', 'polygon']
 
@@ -8,10 +9,10 @@ export const fetchBalances = async (network: string, address: string) => {
   const fweb3Interfaces = await getFweb3Interfaces(network)
   try {
     if (!ALLOWED_NETWORKS.includes(network)) {
-      throw new Error('Unsupported network')
+      throw new Error(ERRORS.BAD_NETWORK_TYPE)
     }
     if (!address && !network) {
-      throw new Error('Missing params')
+      throw new Error(ERRORS.INVALID_REQUEST_PARAMS)
     }
     if (!address) {
       return fetchFaucetBalances(fweb3Interfaces)
