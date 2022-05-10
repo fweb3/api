@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { polygonUrl } from './uris'
-import { parseResponse } from 'server/errors'
+import { parseResponse } from '../../errors'
 
 export const fetchNormalTransactions = async (
   network: string,
