@@ -14,7 +14,7 @@ const MATIC_FAUCETS = [
   '0xF2d86AEe11351D4396eE2Bd663977C91eE2b0F9b', // matic
 ]
 
-export const hasUsedAFaucetBefore = async (type: string, account: string) => {
+export const hasUsedAFaucetBefore = async (account: string) => {
   const ADMIN = [
     '0x124341d2Ad6f8C9862b64e5d96EDc62E5d4B5DE4',
     '0xeFA27c8CD1b31B3ACc72ba814ff8B16258f837F9',
@@ -26,7 +26,10 @@ export const hasUsedAFaucetBefore = async (type: string, account: string) => {
 
   const adminAddresses = ADMIN.map((a) => a.toLowerCase())
   if (adminAddresses.includes(account.toLowerCase())) {
-    return false
+    return {
+      fweb3: false,
+      matic: false,
+    }
   }
   const hasUsedFweb3 =
     result?.filter((tx) => {
