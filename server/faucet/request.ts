@@ -10,11 +10,14 @@ export const requestDripFromFaucet = async (
   body: IFaucetBody
 ): Promise<ContractReceipt> => {
   log.debug(`[+] requesting drip from faucet: ${JSON.stringify(body)}`)
+
   if (body.network === 'polygon') {
     const faucetNotAllowed = await hasUsedAFaucetBefore(body.account)
     log.debug({ faucetNotAllowed })
     if (faucetNotAllowed[body.type]) throw new Error(ERRORS.ALREADY_USED)
-  } else if (body.type.toLowerCase() === 'fweb3') {
+  }
+
+  if (body.type.toLowerCase() === 'fweb3') {
     log.debug('[+] Making fweb3 faucet request')
     const receipt: ContractReceipt = await useFweb3Faucet(body)
     return receipt
