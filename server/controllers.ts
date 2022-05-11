@@ -34,7 +34,6 @@ export const faucetController = async (req: Request, res: Response) => {
       raw_receipt: receipt,
     })
   } catch (err) {
-    log.debug({ err })
     const formattedError = formatFaucetErrors(err)
     res.status(500).json(formattedError)
   }

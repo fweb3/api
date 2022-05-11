@@ -34,7 +34,7 @@ export const attemptTransactionWithGas = async (
         gasPrice: prices[i],
       })
       const receipt = await tx.wait()
-      log.debug({ receipt })
+      return receipt
     } catch (err) {
       const isGasRelated = hasGasRelatedError(err)
       if (isGasRelated && i < prices.length) {

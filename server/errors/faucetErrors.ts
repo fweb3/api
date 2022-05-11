@@ -13,7 +13,8 @@ export const ERRORS: Record<string, string> = {
   BAD_NETWORK_TYPE: 'Network is not supported',
   NO_RECEIPT_ERROR: 'No receipt for tx. Try again in a few.',
   ERROR_GENERIC: 'An unknown error occured',
-  EXAHUSTED_ATTEMPTS: 'All attempts to transact have failed. Try again',
+  EXAHUSTED_ATTEMPTS:
+    'All attempts to transact have failed. Most likely congested network. Try again later',
   ERROR_GETTING_ESTIMATED_GAS: 'Cannot estimate gas',
   ALREADY_USED: 'Account has already used a faucet',
 }
@@ -102,12 +103,17 @@ const ERROR_MAP: IError[] = [
   {
     type: 'ERROR_NO_RECEIPT',
     match: ERRORS.NO_RECEIPT_ERROR,
-    message: 'An unknown error occured.',
+    message: 'No receipt was given. Please check your wallet.',
   },
   {
     type: 'ERROR_USED',
     match: ERRORS.ALREADY_USED,
     message: ERRORS.ALREADY_USED,
+  },
+  {
+    type: 'ERROR_EXAHUSTED_ATTEMPTS',
+    match: ERRORS.EXAHUSTED_ATTEMPTS,
+    message: ERRORS.EXAHUSTED_ATTEMPTS,
   },
 ]
 
@@ -117,7 +123,12 @@ export const hasGasRelatedError = (err): boolean => {
 }
 
 export const formatFaucetErrors = (err): IError => {
-  const possibleErrors = ERROR_MAP.filter((e) => err.message.includes(e.match))
+  const possibleErrors = ERROR_MAP.filter((e) => {
+    if (!err?.message) {
+      return err?.includes(e.match)
+    }
+    return err.message?.includes(e.match)
+  })
   if (possibleErrors.length === 0) {
     return {
       status: 'error',
