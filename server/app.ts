@@ -1,4 +1,4 @@
-import { initializeBotCommands } from './discord/initialize'
+// import { initializeBotCommands } from './discord/initialize'
 import { middleware } from './middleware'
 import { routes } from './routes'
 import express, { Express } from 'express'
@@ -12,6 +12,6 @@ routes(app)
 
 app.listen(PORT, () => {
   console.log(`⚡️[server]: Server is listening on [${PORT}]`)
-  console.log(`🔥 version: [a2]`)
-  initializeBotCommands()
+  console.log(`🔥 version: [v1.1]`)
+  // initializeBotCommands()
 })

@@ -27,8 +27,8 @@ const _accountModuleQueryParams = (account: string) => {
     startBlock: 24445719, // first fweb3 minted
     endblock: 99999999,
     page: 1,
-    offset: 50,
-    sort: 'asc',
+    offset: 500,
+    sort: 'desc',
     apiKey: POLYGONSCAN_API_KEY,
   }
   return Object.entries(obj)

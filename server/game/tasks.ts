@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import type { IPolygonResponse, IPolygonResult } from './polygonscan/types'
+import type { IPolygonResponse, IPolygonResult } from '../polygonscan/types'
 import {
   getContractAddress,
   GENESYS_ADDRESS,
@@ -11,7 +11,7 @@ import {
   fetchInternalTransactions,
   fetchERC721TransferEvents,
   fetchNormalTransactions,
-} from './polygonscan'
+} from '../polygonscan'
 import { DEFAULT_STATE } from './states'
 
 export const calculateGameState = async (network: string, account: string) => {

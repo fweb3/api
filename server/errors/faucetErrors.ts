@@ -15,6 +15,7 @@ export const ERRORS: Record<string, string> = {
   ERROR_GENERIC: 'An unknown error occured',
   EXAHUSTED_ATTEMPTS: 'All attempts to transact have failed. Try again',
   ERROR_GETTING_ESTIMATED_GAS: 'Cannot estimate gas',
+  ALREADY_USED: 'Account has already used a faucet',
 }
 
 const ERROR_MAP: IError[] = [
@@ -102,6 +103,11 @@ const ERROR_MAP: IError[] = [
     type: 'ERROR_NO_RECEIPT',
     match: ERRORS.NO_RECEIPT_ERROR,
     message: 'An unknown error occured.',
+  },
+  {
+    type: 'ERROR_USED',
+    match: ERRORS.ALREADY_USED,
+    message: ERRORS.ALREADY_USED,
   },
 ]
 
