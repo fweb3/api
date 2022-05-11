@@ -29,10 +29,12 @@ export const tokenMiddleware = (
   const { authorization } = req.headers
   const keysArr = API_TOKENS.split(',')
   const token = authorization?.split('Bearer ')[1]
-  console.log({ keysArr, headers: req.headers, token })
   if (!keysArr?.includes(token)) {
-    console.log('unauthorized')
-    res.status(401).json('unauthorized')
+    res.status(401).json({
+      status: 'error',
+      type: 'UNAUTHORIZED',
+      message: 'unauthorized',
+    })
     return
   }
 
