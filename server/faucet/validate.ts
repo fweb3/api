@@ -3,6 +3,7 @@ import { fetchNormalTransactions } from '../polygonscan'
 const FWEB3_FAUCETS = [
   '0x82dB7fe5Cd26804E29534A7f648B780c313BC317', // fweb3
   '0x32Ba4765d6538944ef4324E55B94797a422C72F9', // fweb3
+  '0x4a14ac36667b574b08443a15093e417db909d7a3', // fweb3
 ]
 
 const MATIC_FAUCETS = [
@@ -10,6 +11,7 @@ const MATIC_FAUCETS = [
   '0xe995b21d94638d81ae5123a65fc369f6aea429bc', // matic
   '0x92B4e3A9dB9700757Eb04C7Bf5908cAc57E07b50', // matic
   '0x351050Ac0AdC9bff0622c1c0525b3322C328517f', // matic
+  '0xF2d86AEe11351D4396eE2Bd663977C91eE2b0F9b', // matic
 ]
 
 export const hasUsedAFaucetBefore = async (type: string, account: string) => {
