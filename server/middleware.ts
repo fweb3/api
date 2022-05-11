@@ -1,10 +1,10 @@
+import { log } from './logger'
+import { verifyKey } from 'discord-interactions'
+import bodyParser from 'body-parser'
+import cors from 'cors'
 import express, { Express, NextFunction, Request, Response } from 'express'
 import helmet from 'helmet'
-import bodyParser from 'body-parser'
 import morgan from 'morgan'
-import { verifyKey } from 'discord-interactions'
-import cors from 'cors'
-import { log } from './logger'
 
 const { API_TOKENS, ALLOWED_HOSTS } = process.env
 
@@ -29,6 +29,7 @@ export const tokenMiddleware = (
   const { authorization } = req.headers
   const keysArr = API_TOKENS.split(',')
   const token = authorization?.split('Bearer ')[1]
+  console.log({ keysArr, headers: req.headers, token })
   if (!keysArr?.includes(token)) {
     console.log('unauthorized')
     res.status(401).json('unauthorized')
@@ -42,7 +43,8 @@ export const tokenMiddleware = (
 const corsConfig = {
   origin: ALLOWED_HOSTS.split(','),
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: true,
 }
 
 export const middleware = (app: Express) => {

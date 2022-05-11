@@ -61,7 +61,9 @@ const _gasEstimateTransaction = async (
     throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
   const fweb3FaucetBalance: BigNumber =
-    await fweb3Interface.fweb3Token.balanceOf(fweb3Interface.fweb3Token.address)
+    await fweb3Interface.fweb3Token.balanceOf(
+      fweb3Interface.fweb3Faucet.address
+    )
 
   log.debug({
     sent_fweb3_to: address,

@@ -12,19 +12,7 @@ import {
   fetchERC721TransferEvents,
   fetchNormalTransactions,
 } from './polygonscan'
-
-const DEFAULT_STATE = {
-  hasUsedFweb3Faucet: false,
-  hasUsedMaticFaucet: false,
-  hasSentTokens: false,
-  hasMintedDiamondNFT: false,
-  hasBurnedTokens: false,
-  hasSwappedTokens: false,
-  hasVotedInPoll: false,
-  hasDeployedContract: false,
-  hasWonGame: false,
-  trophyId: '',
-}
+import { DEFAULT_STATE } from './states'
 
 export const calculateGameState = async (network: string, account: string) => {
   const normalTxRelatedState = await normalTxRelated(network, account)

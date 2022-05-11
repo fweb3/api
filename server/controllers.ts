@@ -29,8 +29,9 @@ export const faucetController = async (req: Request, res: Response) => {
     const receipt: ContractReceipt = await requestDripFromFaucet(req.body)
     res.status(200).json({
       status: 'success',
-      transaction_hash: JSON.stringify(receipt?.transactionHash),
-      raw_receipt: JSON.stringify(receipt),
+      message: 'ok',
+      transaction_hash: receipt?.transactionHash,
+      raw_receipt: receipt,
     })
   } catch (err) {
     log.debug({ err })
