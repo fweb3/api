@@ -33,7 +33,8 @@ export const attemptTransactionWithGas = async (
       const tx = await contractToCall.drip(address, {
         gasPrice: prices[i],
       })
-      return tx.wait()
+      const receipt = await tx.wait()
+      log.debug({ receipt })
     } catch (err) {
       const isGasRelated = hasGasRelatedError(err)
       if (isGasRelated && i < prices.length) {
