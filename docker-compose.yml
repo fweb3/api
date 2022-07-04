@@ -1,25 +1,13 @@
-version: "3.8"
+version: '3.8'
 services:
-  # api:
-  #   build: .
-  #   command: yarn dev
-  #   environment:
-  #     - ALLOWED_HOSTS=/localhost$$/
-  #     - DATABASE_URL=postgresql://fweb3:fweb3@fweb3:5432/fweb3_dev
-  #   links:
-  #     - db:fweb3
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - 3001:3001
-  #   volumes:
-  #     - .:/app
   db:
     image: postgres:14.1
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=fweb3
       - POSTGRES_PASSWORD=fweb3
       - POSTGRES_DB=fweb3_dev
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ../pgdata/test:/var/lib/postgresql/data/pgdata
+      - ./pgdata/development:/var/lib/postgresql/data/pgdata

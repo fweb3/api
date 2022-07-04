@@ -1,17 +1,25 @@
 // import { initializeBotCommands } from './discord/initialize'
 import { middleware } from './middleware'
 import { routes } from './routes'
-import express, { Express } from 'express'
+import express from 'express'
+import { createApolloServer } from './graphql'
 
-const { PORT = 3000 } = process.env
+const { PORT = 3001 } = process.env
 
-const app: Express = express()
+;(async () => {
+  try {
+    const app = express()
 
-middleware(app)
-routes(app)
+    middleware(app)
+    routes(app)
+    await createApolloServer(app)
 
-app.listen(PORT, () => {
-  console.log(`⚡️[server]: Server is listening on [${PORT}]`)
-  console.log(`🔥 version: [v1.1]`)
-  // initializeBotCommands()
-})
+    app.listen(PORT, () => {
+      console.log(`⚡️[server]: Server is listening on [${PORT}]`)
+      console.log(`🔥 version: [v1.1]`)
+      // initializeBotCommands()
+    })
+  } catch (err) {
+    console.error(err.message)
+  }
+})()
