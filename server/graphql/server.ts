@@ -1,10 +1,10 @@
 import { ApolloServer } from 'apollo-server-express'
 import { resolvers } from './resolvers'
-import { schema } from './schema'
+import { typeDefs } from './schemas'
 
 const createApolloServer = async (app) => {
   const server = new ApolloServer({
-    typeDefs: schema,
+    typeDefs,
     resolvers,
     debug: true,
     csrfPrevention: true,

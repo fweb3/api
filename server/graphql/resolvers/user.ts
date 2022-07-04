@@ -1,6 +1,6 @@
-import { UserService } from './service'
+import { UserService } from '../service'
 
-const resolvers = {
+const userResolver = {
   Query: {
     allUsers: () => UserService.all(),
     findByAccount: (root, { account }) => UserService.find(account),
@@ -11,4 +11,4 @@ const resolvers = {
   },
 }
 
-export { resolvers }
+export { userResolver }

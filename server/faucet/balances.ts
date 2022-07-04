@@ -24,38 +24,45 @@ export const fetchBalances = async (network: string, address: string) => {
   }
 }
 
-export const fetchFaucetBalances = async ({
-  fweb3Faucet,
-  fweb3Token,
+export const fetchFaucetBalances = async (interfaces: IFweb3Interfaces) => {
+  log.debug(`[+] Fetching faucet balances for: [${interfaces.network}]`)
+  const balances = {
+    fweb3: await fetchFweb3Faucetbalance(interfaces),
+    matic: await fetchMaticFaucetBalance(interfaces),
+  }
+  log.debug(balances)
+  return balances
+}
+
+export const fetchMaticFaucetBalance = async ({
   maticFaucet,
   provider,
-  network,
 }: IFweb3Interfaces) => {
-  log.debug(`[+] Fetching faucet balances for: [${network}]`)
-
   const maticFaucetBalance = await provider.getBalance(maticFaucet.address)
+  const maticDrip = await maticFaucet.dripAmount()
+  return {
+    faucetAddress: maticFaucet.address,
+    maticBalance: ethers.utils.formatEther(maticFaucetBalance.toString()),
+    dripAmount: ethers.utils.formatEther(maticDrip.toString()),
+  }
+}
+
+export const fetchFweb3Faucetbalance = async ({
+  fweb3Faucet,
+  fweb3Token,
+  provider,
+}: IFweb3Interfaces) => {
   const fweb3MaticBalance = await provider.getBalance(fweb3Faucet.address)
   const fweb3Balance = await fweb3Token.balanceOf(fweb3Faucet.address)
   const fweb3Drip = await fweb3Faucet.dripAmount()
-  const maticDrip = await maticFaucet.dripAmount()
 
-  const balances = {
-    fweb3: {
-      token_address: fweb3Token.address,
-      faucet_address: fweb3Faucet.address,
-      token_balance: ethers.utils.formatEther(fweb3Balance.toString()),
-      matic_balance: ethers.utils.formatEther(fweb3MaticBalance.toString()),
-      drip_amount: ethers.utils.formatEther(fweb3Drip.toString()),
-    },
-    matic: {
-      faucet_address: maticFaucet.address,
-      matic_balance: ethers.utils.formatEther(maticFaucetBalance.toString()),
-      drip_amount: ethers.utils.formatEther(maticDrip.toString()),
-    },
+  return {
+    tokenAddress: fweb3Token.address,
+    faucetAddress: fweb3Faucet.address,
+    tokenBalance: ethers.utils.formatEther(fweb3Balance.toString()),
+    maticBalance: ethers.utils.formatEther(fweb3MaticBalance.toString()),
+    dripAmount: ethers.utils.formatEther(fweb3Drip.toString()),
   }
-
-  log.debug(balances)
-  return balances
 }
 
 const _fetchAccountBalances = async (

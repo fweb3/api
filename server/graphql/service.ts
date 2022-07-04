@@ -3,18 +3,17 @@ const prisma = new PrismaClient()
 
 class UserService {
   static async all() {
-    return prisma.user.findMany()
+    return prisma.user.findMany({ include: { taskState: true } })
   }
 
   static async create(account) {
-    const user = await prisma.user.create({
+    return prisma.user.create({
       data: { account: account },
     })
-    return user
   }
 
   static async find(account) {
-    const user = await prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: {
         account,
       },
@@ -22,7 +21,6 @@ class UserService {
         taskState: true,
       },
     })
-    return user
   }
 
   static async findOrCreate(account: string) {

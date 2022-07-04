@@ -1,4 +1,10 @@
-export { fetchBalances } from './balances'
+export {
+  fetchBalances,
+  fetchFaucetBalances,
+  fetchFweb3Faucetbalance,
+  fetchMaticFaucetBalance,
+} from './balances'
+export { disableFaucet, drainFaucet } from './disable'
 export { fetchCurrentFaucetState } from './faucetStates'
-export { formatFaucetErrors as formatError } from '../errors/faucetErrors'
+export { formatFaucetErrors } from '../errors/faucetErrors'
 export { requestDripFromFaucet } from './request'
