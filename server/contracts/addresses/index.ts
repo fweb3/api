@@ -2,6 +2,7 @@ import * as LOCAL_ADDRESSES from './localhost.json'
 import * as MUMBAI_ADDRESSES from './mumbai.json'
 import * as POLYGON_ADDRESSES from './polygon.json'
 import * as ORIGINAL_ADDRESSES from './original.json'
+import { AllowedNetwork } from '../../enums'
 
 interface IContractMap {
   [key: string]: {
@@ -17,5 +18,9 @@ const CONTRACT_MAP: IContractMap = {
 }
 
 export const getContractAddress = (network: string, name: string) => {
-  return CONTRACT_MAP[network][name].toString()
+  const isAllowed = Object.keys(AllowedNetwork).includes(network.toUpperCase())
+  if (isAllowed) {
+    return CONTRACT_MAP[network][name].toString()
+  }
+  throw new Error('Network not allowed to load contract address')
 }

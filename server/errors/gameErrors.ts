@@ -1,9 +1,3 @@
-// const ERRORS_MAP = {
-//   ERROR_INVALID_ADDRESS: {
-//     message:
-//   }
-// }
-
 export const parseResponse = (rawResponse) => {
   const { status, message } = rawResponse
   if (status !== '1') {

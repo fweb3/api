@@ -14,8 +14,16 @@ const faucetSchema = gql`
     matic: BalanceData
   }
 
-  type Receipt {
-    txHash: String
+  type DisableResponse {
+    status: String
+    receipt: String
+    transactionHash: String
+  }
+
+  type DrainResponse {
+    status: String
+    receipt: [String]
+    transactionHash: [String]
   }
 
   extend type Query {
@@ -23,8 +31,17 @@ const faucetSchema = gql`
   }
 
   extend type Mutation {
-    disableFaucet(faucet: String, network: String): Receipt
-    drainFaucet(faucet: String, network: String): Receipt
+    setDisableFaucet(
+      faucet: String!
+      network: String!
+      val: Boolean!
+    ): DisableResponse
+    drainFaucet(
+      reciepient: String!
+      faucet: String!
+      network: String!
+      kind: String!
+    ): DrainResponse
   }
 `
 

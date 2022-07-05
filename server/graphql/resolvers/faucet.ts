@@ -1,22 +1,16 @@
-import { getFweb3Interfaces } from '../../interfaces'
 import { fetchFaucetBalances, disableFaucet, drainFaucet } from '../../faucet'
+import { getFweb3Interfaces } from '../../interfaces'
 
 const faucetResolver = {
   Query: {
-    faucetBalance: async (root, { network = 'polygon' }) => {
+    faucetBalance: async (root, { network }) => {
       const interfaces = await getFweb3Interfaces(network)
       return fetchFaucetBalances(interfaces)
     },
   },
   Mutation: {
-    disableFaucet: async (root, { faucet = 'fweb3', network = 'mumbai' }) => {
-      const interfaces = await getFweb3Interfaces(network)
-      return disableFaucet(faucet, interfaces)
-    },
-    drainFaucet: async (root, { faucet = 'fweb3', network = 'mumbai' }) => {
-      const interfaces = await getFweb3Interfaces(network)
-      return drainFaucet(faucet, interfaces)
-    },
+    setDisableFaucet: disableFaucet,
+    drainFaucet,
   },
 }
 

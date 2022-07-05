@@ -29,7 +29,8 @@ export const tokenMiddleware = (
   const { authorization } = req.headers
   const keysArr = API_TOKENS.split(',')
   const token = authorization?.split('Bearer ')[1]
-  if (!keysArr?.includes(token)) {
+
+  if (!keysArr?.includes(token) && process.env.NODE_ENV === 'production') {
     res.status(401).json({
       status: 'error',
       type: 'UNAUTHORIZED',
@@ -52,11 +53,18 @@ const corsConfig = {
 export const middleware = (app: Express) => {
   app.use(
     '/bots/discord',
-    express.json({ verify: verifyDiscordRequest(process.env.PUBLIC_KEY) })
+    express.json({
+      verify: verifyDiscordRequest(process.env.DISCORD_PUBLIC_KEY),
+    })
   )
   app.use('/api', tokenMiddleware)
   app.use(bodyParser.json())
   app.use(morgan('common'))
-  app.use(helmet())
+  app.use(
+    helmet({
+      contentSecurityPolicy:
+        process.env.NODE_ENV === 'production' ? undefined : false,
+    })
+  )
   app.use(cors(corsConfig))
 }

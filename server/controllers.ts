@@ -1,32 +1,30 @@
-import { formatGameErrors } from './errors/gameErrors'
-import { formatFaucetErrors } from './errors/faucetErrors'
+import { AllowedNetwork } from './enums'
 import { calculateGameState, confirmAndAwardWinner } from './game'
+import { formatFaucetErrors } from './errors/faucetErrors'
+import { formatGameErrors } from './errors/gameErrors'
 import { log } from './logger'
 import { processCommand } from './discord/commands'
 import { Request, Response } from 'express'
-import { ContractReceipt } from 'ethers'
 import {
-  requestDripFromFaucet,
   fetchBalances,
   fetchCurrentFaucetState,
+  requestDripFromFaucet,
 } from './faucet'
 
 export const gameController = async (req: Request, res: Response) => {
   try {
     const { network, account } = req.query
-    const payload = await calculateGameState(
-      network.toString(),
-      account.toString()
-    )
+    const allowedNetwork = AllowedNetwork[network.toString().toUpperCase()]
+    const payload = await calculateGameState(allowedNetwork, account.toString())
     res.status(200).json(payload)
   } catch (err) {
-    res.status(500).json(err)
+    res.status(500).json(err.message)
   }
 }
 
 export const faucetController = async (req: Request, res: Response) => {
   try {
-    const receipt: ContractReceipt = await requestDripFromFaucet(req.body)
+    const receipt = await requestDripFromFaucet(req.body)
     res.status(200).json({
       status: 'success',
       message: 'ok',

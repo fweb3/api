@@ -1,5 +1,5 @@
-import { attemptTransactionWithGas } from './transact'
-import { BigNumber, ContractReceipt, ContractTransaction } from 'ethers'
+import { attemptDripTransactionWithGas } from './transact'
+import { ContractReceipt } from 'ethers'
 import { ERRORS } from '../errors/faucetErrors'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
 import { log } from '../logger'
@@ -23,9 +23,9 @@ const _gasEstimatedTransaction = async (
   interfaces: IFweb3Interfaces,
   account: string
 ): Promise<ContractReceipt> => {
-  const { provider, maticFaucet }: IFweb3Interfaces = interfaces
+  const { provider, maticFaucet } = interfaces
 
-  const receipt: ContractReceipt = await attemptTransactionWithGas(
+  const receipt = await attemptDripTransactionWithGas(
     interfaces,
     account,
     'matic'
@@ -33,7 +33,7 @@ const _gasEstimatedTransaction = async (
   if (!receipt) {
     throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
-  const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
+  const endBalance = await provider.getBalance(maticFaucet.address)
 
   log.debug({
     sent_matic_to: account,
@@ -48,14 +48,14 @@ const _localTransaction = async (
   { maticFaucet, provider }: IFweb3Interfaces,
   account: string
 ): Promise<ContractReceipt> => {
-  const tx: ContractTransaction = await maticFaucet.drip(account)
-  const receipt: ContractReceipt = await tx.wait()
+  const tx = await maticFaucet.drip(account)
+  const receipt = await tx.wait()
 
   if (!receipt) {
     throw new Error(ERRORS.ERROR_NO_RECEIPT)
   }
 
-  const endBalance: BigNumber = await provider.getBalance(maticFaucet.address)
+  const endBalance = await provider.getBalance(maticFaucet.address)
 
   log.debug({
     sent_matic_to: account,
