@@ -18,6 +18,7 @@ export const gameController = async (req: Request, res: Response) => {
     const payload = await calculateGameState(allowedNetwork, account.toString())
     res.status(200).json(payload)
   } catch (err) {
+    console.error(err)
     res.status(500).json(err.message)
   }
 }
@@ -32,7 +33,7 @@ export const faucetController = async (req: Request, res: Response) => {
       raw_receipt: receipt,
     })
   } catch (err) {
-    console.log('error in controller: ', JSON.stringify(err))
+    console.error(err)
     const formattedError = formatFaucetErrors(err)
     res.status(500).json(formattedError)
   }
@@ -62,6 +63,7 @@ export const faucetStateController = async (req: Request, res: Response) => {
     const payload = await fetchCurrentFaucetState(network?.toString())
     return res.status(200).json(payload)
   } catch (err) {
+    console.error(err)
     const errorPayload = {
       status: 'error',
       message: err.message,
@@ -75,6 +77,7 @@ export const awardController = async (req: Request, res: Response) => {
     const payload = await confirmAndAwardWinner(req.body)
     return res.status(200).json(payload)
   } catch (err) {
+    console.error(err)
     const errorPayload = formatGameErrors(err)
     res.status(500).json(errorPayload)
   }
@@ -82,7 +85,6 @@ export const awardController = async (req: Request, res: Response) => {
 
 export const discordController = async (req, res) => {
   try {
-    console.log({ req })
     const payload = await processCommand(req.body)
     res.send(payload)
   } catch (err: unknown) {
