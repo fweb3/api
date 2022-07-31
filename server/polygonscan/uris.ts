@@ -5,9 +5,11 @@ export const polygonUrl = (
   account: string,
   action: string
 ) => {
-  return `${_getBaseURL(network)}?${_accountModuleQueryParams(
+  const url = `${_getBaseURL(network)}?${_accountModuleQueryParams(
     account
   )}&action=${action}`
+  console.info('using polygon url: ', url)
+  return url
 }
 
 const _getBaseURL = (network: string) => {

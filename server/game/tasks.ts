@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import type { IPolygonResponse, IPolygonResult } from '../polygonscan/types'
+import type { IPolygonResult } from '../polygonscan/types'
 import { loadAddresses } from '../contracts/addresses'
 import {
   fetchERC20TransferEvents,
@@ -50,9 +50,11 @@ const normalTxRelated = async (network: string, account: string) => {
 }
 const internalTxRelated = async (network: string, account: string) => {
   const { result } = await fetchInternalTransactions(network, account)
-
+  console.info('fetched internal tx')
   const hasUsedMaticFaucet = await checkHasUsedMaticFaucet(network, result)
+  console.info('checked if used matic faucet')
   const hasSwappedTokens = await checkHasSwappedTokens(network, result)
+  console.info('check has swapped tokens')
   return {
     hasUsedMaticFaucet,
     hasSwappedTokens,
