@@ -1,4 +1,4 @@
-import { attemptTransactionWithGas } from './transact'
+import { attemptDripTransactionWithGas } from './transact'
 import { BigNumber, ContractReceipt, ContractTransaction, ethers } from 'ethers'
 import { ERRORS } from '../errors/faucetErrors'
 import { getFweb3Interfaces, IFweb3Interfaces } from '../interfaces'
@@ -52,7 +52,7 @@ const _gasEstimateTransaction = async (
 ): Promise<ContractReceipt> => {
   log.debug('[+] Running fweb3 faucet with gas estimator')
 
-  const receipt: Promise<ContractReceipt> = await attemptTransactionWithGas(
+  const receipt: Promise<ContractReceipt> = await attemptDripTransactionWithGas(
     fweb3Interface,
     address,
     'fweb3'

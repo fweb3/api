@@ -1,6 +1,6 @@
 import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers'
 import { Contract, ethers, Wallet } from 'ethers'
-import { getContractAddress, loadAbi } from './contracts'
+import { loadAbi, loadAddresses } from './contracts'
 import { log } from './logger'
 
 const {
@@ -47,9 +47,9 @@ export const getFweb3Interfaces = async (
 ): Promise<IFweb3Interfaces> => {
   const { wallet, provider } = await _buildCoreInterfaces(network)
 
-  const fweb3TokenAddress = getContractAddress(network, 'fweb3Token')
-  const fweb3FaucetAddress = getContractAddress(network, 'fweb3TokenFaucet')
-  const maticFaucetAddress = getContractAddress(network, 'fweb3MaticFaucet')
+  const fweb3TokenAddress = loadAddresses(network, 'fweb3_token')[0]
+  const fweb3FaucetAddress = loadAddresses(network, 'fweb3_token_faucet')[0]
+  const maticFaucetAddress = loadAddresses(network, 'fweb3_matic_faucet')[0]
 
   const fweb3FaucetAbi = loadAbi('fweb3TokenFaucet')
   const maticFaucetAbi = loadAbi('fweb3MaticFaucet')

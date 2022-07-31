@@ -1,3 +1,3 @@
-export const awardWinner = async (network: string, account: string) => {
+export const awardWinner = async () => {
   // foobar
 }

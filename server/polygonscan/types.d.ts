@@ -20,6 +20,7 @@ export interface IPolygonResult {
   traceId: string
   isError: string
   errCode: string
+  tokenID?: string
 }
 
 export interface IPolygonResponse {

@@ -19,11 +19,11 @@ export const requestDripFromFaucet = async (
 
   if (body.type.toLowerCase() === 'fweb3') {
     log.debug('[+] Making fweb3 faucet request')
-    const receipt: ContractReceipt = await useFweb3Faucet(body)
+    const receipt = await useFweb3Faucet(body)
     return receipt
   } else if (body.type.toLowerCase() === 'matic') {
     log.debug('[+] Making matic faucet request')
-    const receipt: ContractReceipt = await useMaticFaucet(body)
+    const receipt = await useMaticFaucet(body)
     return receipt
   } else {
     throw new Error(ERRORS.INVALID_REQUEST_PARAMS)

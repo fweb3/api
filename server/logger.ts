@@ -7,6 +7,6 @@ export const log = {
     _isDebugEnabled() && console.log(msg)
   },
   error: (msg: string | Record<string, unknown>) => {
-    _isDebugEnabled() && console.error(msg)
+    console.error(msg)
   },
 }
