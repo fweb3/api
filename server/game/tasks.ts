@@ -1,11 +1,6 @@
 import { ethers } from 'ethers'
 import type { IPolygonResponse, IPolygonResult } from '../polygonscan/types'
-import {
-  getContractAddress,
-  GENESYS_ADDRESS,
-  SWAP_ROUTER_V2,
-  BURN_ADDRESS,
-} from '../contracts'
+import { loadAddresses } from '../contracts/addresses'
 import {
   fetchERC20TransferEvents,
   fetchInternalTransactions,
@@ -41,11 +36,7 @@ export const calculateGameState = async (network: string, account: string) => {
 }
 
 const normalTxRelated = async (network: string, account: string) => {
-  const { result }: IPolygonResponse = await fetchNormalTransactions(
-    network,
-    account
-  )
-
+  const { result } = await fetchNormalTransactions(network, account)
   const hasVotedInPoll = await checkHasVotedInPoll(network, result)
   const hasDeployedContract = await checkHasDeployedContract(result)
   return {
@@ -54,13 +45,10 @@ const normalTxRelated = async (network: string, account: string) => {
   }
 }
 const internalTxRelated = async (network: string, account: string) => {
-  const { result }: IPolygonResponse = await fetchInternalTransactions(
-    network,
-    account
-  )
+  const { result } = await fetchInternalTransactions(network, account)
 
   const hasUsedMaticFaucet = await checkHasUsedMaticFaucet(network, result)
-  const hasSwappedTokens = await checkHasSwappedTokens(result)
+  const hasSwappedTokens = await checkHasSwappedTokens(network, result)
   return {
     hasUsedMaticFaucet,
     hasSwappedTokens,
@@ -68,7 +56,7 @@ const internalTxRelated = async (network: string, account: string) => {
 }
 
 const erc20TransferRelated = async (network: string, account: string) => {
-  const fweb3TokenAddress = getContractAddress(network, 'fweb3Token')
+  const fweb3TokenAddress = loadAddresses(network, 'fweb3_token')[0]
   const { result }: IPolygonResponse = await fetchERC20TransferEvents(
     network,
     account,
@@ -77,7 +65,7 @@ const erc20TransferRelated = async (network: string, account: string) => {
 
   const hasUsedFweb3Faucet = await checkHasUsedFweb3Faucet(network, result)
   const hasSentTokens = await checkHasSentFweb3(account, result)
-  const hasBurnedTokens = await checkHasBurnedTokens(account, result)
+  const hasBurnedTokens = await checkHasBurnedTokens(network, account, result)
   return {
     hasUsedFweb3Faucet,
     hasSentTokens,
@@ -86,14 +74,13 @@ const erc20TransferRelated = async (network: string, account: string) => {
 }
 
 const erc721TokenTransferRelated = async (network: string, account: string) => {
-  const { result }: IPolygonResponse = await fetchERC721TransferEvents(
-    network,
-    account
-  )
-
-  const hasMintedDiamondNFT = await checkHasMintedDiamondNFT(network, result)
+  const { result } = await fetchERC721TransferEvents(network, account)
+  const { hasMintedDiamondNFT, hasWonGame, trophyId } =
+    await checkHasMintedNFTs(network, result)
   return {
     hasMintedDiamondNFT,
+    hasWonGame,
+    trophyId,
   }
 }
 
@@ -101,13 +88,15 @@ const checkHasUsedFweb3Faucet = async (
   network: string,
   result: IPolygonResult[]
 ): Promise<boolean> => {
-  const fweb3MaticFaucetAddress = getContractAddress(
-    network,
-    'fweb3TokenFaucet'
-  )
+  const fweb3FaucetAddresses = loadAddresses(network, 'fweb3_token_faucet')
   return (
-    result?.filter((tx) => _lower(tx.from) === _lower(fweb3MaticFaucetAddress))
-      .length !== 0
+    result?.filter(
+      (tx) =>
+        _lower(tx.from) ===
+        fweb3FaucetAddresses
+          .map((address) => _lower(address))
+          .includes(_lower(tx.to))
+    ).length !== 0
   )
 }
 
@@ -115,13 +104,15 @@ export const checkHasUsedMaticFaucet = async (
   network: string,
   result: IPolygonResult[]
 ) => {
-  const fweb3MaticFaucetAddress = getContractAddress(
-    network,
-    'fweb3MaticFaucet'
-  )
+  const maticFaucetAddresses = loadAddresses(network, 'fweb3_matic_faucet')
   return (
-    result?.filter((tx) => _lower(tx.from) === _lower(fweb3MaticFaucetAddress))
-      .length !== 0
+    result?.filter(
+      (tx) =>
+        (_lower(tx.from) === _lower(tx.from)) ===
+        maticFaucetAddresses
+          .map((address) => _lower(address))
+          .includes(_lower(tx.to))
+    ).length !== 0
   )
 }
 
@@ -137,45 +128,58 @@ const checkHasSentFweb3 = async (account: string, result: IPolygonResult[]) => {
   )
 }
 
-const checkHasMintedDiamondNFT = async (
+const checkHasMintedNFTs = async (
   network: string,
-  result: IPolygonResult[]
+  results: IPolygonResult[]
 ) => {
-  const originFweb3DiamondNFTAddress = getContractAddress(
-    network,
-    'originalFweb3DiamondNft'
-  )
-  const fweb3DiamondNFTAddress = getContractAddress(network, 'fweb3DiamondNft')
-  return (
-    result?.filter((tx) => {
-      const isGenesys = _lower(tx.from) === _lower(GENESYS_ADDRESS)
-      const isOriginDiamond =
-        _lower(originFweb3DiamondNFTAddress) === _lower(tx.contractAddress)
-      const isDiamondNft =
-        _lower(fweb3DiamondNFTAddress) === _lower(tx.contractAddress)
-      return (isGenesys && isOriginDiamond) || (isGenesys && isDiamondNft)
-    }).length !== 0
-  )
+  const fweb3DiamonNftAddresses = loadAddresses(network, 'fweb3_diamond_nft')[0]
+  const fweb3TrophyAddress = loadAddresses(network, 'fweb3_trophy')[0]
+  return {
+    hasMintedDiamondNFT:
+      _nftRecord(fweb3DiamonNftAddresses, results).length !== 0,
+    ..._hasWonGame(fweb3TrophyAddress, results),
+  }
+}
+
+const _hasWonGame = (contractAddress: string, results: IPolygonResult[]) => {
+  const record = _nftRecord(contractAddress, results)
+  const trophyId = record?.[0]?.tokenID || ''
+  return {
+    hasWonGame: record.length !== 0,
+    trophyId,
+  }
+}
+
+const _nftRecord = (contractAddress: string, result: IPolygonResult[]) => {
+  const genesysAddress = loadAddresses('polygon', 'genesys')[0]
+  return result?.filter((tx) => {
+    const isGenesys = _lower(tx.from) === _lower(genesysAddress)
+    const hasNft = _lower(contractAddress) === _lower(tx.contractAddress)
+    return isGenesys && hasNft
+  })
 }
 
 const checkHasBurnedTokens = async (
+  network: string,
   account: string,
   result: IPolygonResult[]
 ) => {
+  const burnAddress = loadAddresses(network, 'burn')[0]
   return (
     result?.filter((tx) => {
       const wasAccount = _lower(account) === _lower(tx.from)
       const burnAmt = parseInt(ethers.utils.formatEther(tx.value))
-      const sentToBurn = _lower(tx.to) === _lower(BURN_ADDRESS)
+      const sentToBurn = _lower(tx.to) === _lower(burnAddress)
       return wasAccount && burnAmt >= 1 && sentToBurn
     }).length !== 0
   )
 }
 
-const checkHasSwappedTokens = async (result: IPolygonResult[]) => {
+const checkHasSwappedTokens = async (network, result: IPolygonResult[]) => {
+  const swapRouterAddress = loadAddresses(network, 'swap_router')[0]
   return (
     result?.filter((tx) => {
-      return _lower(tx.to) === _lower(SWAP_ROUTER_V2)
+      return _lower(tx.to) === _lower(swapRouterAddress)
     }).length !== 0
   )
 }
@@ -184,14 +188,9 @@ const checkHasVotedInPoll = async (
   network: string,
   result: IPolygonResult[]
 ) => {
-  const originalPollAddress = getContractAddress(network, 'originalFweb3Poll')
-  const fweb3Poll = getContractAddress(network, 'fweb3Poll')
+  const fweb3Poll = loadAddresses(network, 'fweb3_poll')[0]
   return (
-    result?.filter((tx) => {
-      const votedInOriginalPoll = _lower(tx.to) === _lower(originalPollAddress)
-      const votedInFweb3Poll = _lower(tx.to) === _lower(fweb3Poll)
-      return votedInOriginalPoll || votedInFweb3Poll
-    }).length !== 0
+    result?.filter((tx) => _lower(tx.to) === _lower(fweb3Poll)).length !== 0
   )
 }
 

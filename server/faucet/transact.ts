@@ -10,7 +10,7 @@ const waitFor = (ms) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export const attemptTransactionWithGas = async (
+export const attemptDripTransactionWithGas = async (
   interfaces: IFweb3Interfaces,
   address: string,
   type: string

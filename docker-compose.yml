@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.1
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=fweb3
+      - POSTGRES_PASSWORD=fweb3
+      - POSTGRES_DB=fweb3_dev
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pgdata/development:/var/lib/postgresql/data/pgdata
