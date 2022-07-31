@@ -12,7 +12,7 @@ const { PORT = 3001 } = process.env
 
     middleware(app)
     routes(app)
-    await createApolloServer(app)
+    // await createApolloServer(app)
 
     app.listen(PORT, () => {
       console.log(`⚡️[server]: Server is listening on [${PORT}]`)

@@ -9,8 +9,8 @@ const faucetResolver = {
     },
   },
   Mutation: {
-    setDisableFaucet: disableFaucet,
-    drainFaucet,
+    // setDisableFaucet: disableFaucet,
+    // drainFaucet,
   },
 }
 
