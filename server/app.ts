@@ -2,7 +2,7 @@
 import { middleware } from './middleware'
 import { routes } from './routes'
 import express from 'express'
-import { createApolloServer } from './graphql'
+// import { createApolloServer } from './graphql'
 
 const { PORT = 3001 } = process.env
 

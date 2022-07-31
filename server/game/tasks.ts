@@ -11,12 +11,16 @@ import { DEFAULT_STATE } from './states'
 
 export const calculateGameState = async (network: string, account: string) => {
   const normalTxRelatedState = await normalTxRelated(network, account)
+  console.info('PROCESSED NORMAL TX')
   const internalRelatedState = await internalTxRelated(network, account)
+  console.info('PROCESSED INTERNAL TX')
   const erc20TransferRelatedState = await erc20TransferRelated(network, account)
+  console.info('PROCESSED ERC20 TRANSFER TX')
   const erc721TransferRelatedState = await erc721TokenTransferRelated(
     network,
     account
   )
+  console.info('PROCESSED ERC721 TRANSFER TX')
   const state = {
     ...DEFAULT_STATE,
     ...internalRelatedState,
@@ -57,7 +61,7 @@ const internalTxRelated = async (network: string, account: string) => {
 
 const erc20TransferRelated = async (network: string, account: string) => {
   const fweb3TokenAddress = loadAddresses(network, 'fweb3_token')[0]
-  const { result }: IPolygonResponse = await fetchERC20TransferEvents(
+  const { result } = await fetchERC20TransferEvents(
     network,
     account,
     fweb3TokenAddress
