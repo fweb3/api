@@ -11,16 +11,12 @@ import { DEFAULT_STATE } from './states'
 
 export const calculateGameState = async (network: string, account: string) => {
   const normalTxRelatedState = await normalTxRelated(network, account)
-  console.info('PROCESSED NORMAL TX')
   const internalRelatedState = await internalTxRelated(network, account)
-  console.info('PROCESSED INTERNAL TX')
   const erc20TransferRelatedState = await erc20TransferRelated(network, account)
-  console.info('PROCESSED ERC20 TRANSFER TX')
   const erc721TransferRelatedState = await erc721TokenTransferRelated(
     network,
     account
   )
-  console.info('PROCESSED ERC721 TRANSFER TX')
   const state = {
     ...DEFAULT_STATE,
     ...internalRelatedState,
@@ -50,11 +46,8 @@ const normalTxRelated = async (network: string, account: string) => {
 }
 const internalTxRelated = async (network: string, account: string) => {
   const { result } = await fetchInternalTransactions(network, account)
-  console.info('fetched internal tx')
   const hasUsedMaticFaucet = await checkHasUsedMaticFaucet(network, result)
-  console.info('checked if used matic faucet')
   const hasSwappedTokens = await checkHasSwappedTokens(network, result)
-  console.info('check has swapped tokens')
   return {
     hasUsedMaticFaucet,
     hasSwappedTokens,
