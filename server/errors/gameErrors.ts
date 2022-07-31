@@ -7,6 +7,7 @@ export const parseResponse = (rawResponse) => {
 }
 
 export const formatGameErrors = (err) => {
+  console.error('ERROR_DEBUG:', err)
   return {
     status: 'error',
     message: err.message,
