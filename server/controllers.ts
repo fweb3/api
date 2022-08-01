@@ -11,6 +11,19 @@ import {
   requestDripFromFaucet,
 } from './faucet'
 
+import { verifyTwitter } from './twitter'
+
+export const twitterController = async (req: Request, res: Response) => {
+  try {
+    const { username } = req.query
+    const payload = await verifyTwitter(username.toString())
+    res.status(200).json(payload)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json(err.message)
+  }
+}
+
 export const gameController = async (req: Request, res: Response) => {
   try {
     const { network, account } = req.query
