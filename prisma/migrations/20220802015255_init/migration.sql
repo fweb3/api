@@ -8,11 +8,28 @@ CREATE TABLE "User" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "account" TEXT NOT NULL,
     "email" TEXT,
-    "displayName" TEXT,
+    "discord" TEXT,
     "ens" TEXT,
     "role" "Role" NOT NULL DEFAULT 'PLAYER',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Twitter" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "profileImageUrl" TEXT,
+    "name" TEXT,
+    "twitterId" TEXT,
+    "username" TEXT,
+    "followersCount" INTEGER,
+    "followingCount" INTEGER,
+    "tweetCount" INTEGER,
+    "location" TEXT,
+    "twitterCreatedAt" TIMESTAMP(3),
+
+    CONSTRAINT "Twitter_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -40,13 +57,28 @@ CREATE UNIQUE INDEX "User_account_key" ON "User"("account");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_displayName_key" ON "User"("displayName");
+CREATE UNIQUE INDEX "User_discord_key" ON "User"("discord");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_ens_key" ON "User"("ens");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Twitter_userId_key" ON "Twitter"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Twitter_name_key" ON "Twitter"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Twitter_twitterId_key" ON "Twitter"("twitterId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Twitter_username_key" ON "Twitter"("username");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "TaskState_userId_key" ON "TaskState"("userId");
+
+-- AddForeignKey
+ALTER TABLE "Twitter" ADD CONSTRAINT "Twitter_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TaskState" ADD CONSTRAINT "TaskState_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

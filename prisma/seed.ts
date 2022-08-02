@@ -13,14 +13,22 @@ type Role = typeof Role[keyof typeof Role]
 const users = [
   {
     account: 'foo',
-    displayName: 'foobarbaz',
     email: 'foo@bar.com',
     role: Role.PLAYER,
     ens: 'foo.eth',
+    taskState: {
+      create: {
+        hasSentTokens: true,
+      },
+    },
+    twitter: {
+      create: {
+        name: 'footwitteraccount',
+      },
+    },
   },
   {
     account: 'adminaccountwallet',
-    displayName: 'teapot',
     email: 'admin@bar.com',
     role: Role.ADMIN,
     ens: 'admin.eth',
@@ -33,7 +41,6 @@ const users = [
   },
   {
     account: 'rootaccountwallet',
-    displayName: 'sudoyou',
     email: 'root@bar.com',
     role: Role.ROOT,
     ens: 'root.eth',
