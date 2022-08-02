@@ -12,6 +12,7 @@ CREATE TABLE "User" (
     "ens" TEXT,
     "role" "Role" NOT NULL DEFAULT 'PLAYER',
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "clientInfo" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -29,6 +30,7 @@ CREATE TABLE "IpInfo" (
     "org" TEXT,
     "postal" TEXT,
     "timezone" TEXT,
+    "userAgent" TEXT,
 
     CONSTRAINT "IpInfo_pkey" PRIMARY KEY ("id")
 );
@@ -48,24 +50,6 @@ CREATE TABLE "Twitter" (
     "twitterCreatedAt" TIMESTAMP(3),
 
     CONSTRAINT "Twitter_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "TaskState" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "hasWonGame" BOOLEAN NOT NULL DEFAULT false,
-    "hasUsedFweb3Faucet" BOOLEAN NOT NULL DEFAULT false,
-    "hasUsedMaticFaucet" BOOLEAN NOT NULL DEFAULT false,
-    "hasSentTokens" BOOLEAN NOT NULL DEFAULT false,
-    "hasMintedDiamondNFT" BOOLEAN NOT NULL DEFAULT false,
-    "hasBurnedTokens" BOOLEAN NOT NULL DEFAULT false,
-    "hasSwappedTokens" BOOLEAN NOT NULL DEFAULT false,
-    "hasVotedInPoll" BOOLEAN NOT NULL DEFAULT false,
-    "hasDeployedContract" BOOLEAN NOT NULL DEFAULT false,
-    "trophyId" TEXT,
-
-    CONSTRAINT "TaskState_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -95,14 +79,8 @@ CREATE UNIQUE INDEX "Twitter_twitterId_key" ON "Twitter"("twitterId");
 -- CreateIndex
 CREATE UNIQUE INDEX "Twitter_username_key" ON "Twitter"("username");
 
--- CreateIndex
-CREATE UNIQUE INDEX "TaskState_userId_key" ON "TaskState"("userId");
-
 -- AddForeignKey
 ALTER TABLE "IpInfo" ADD CONSTRAINT "IpInfo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Twitter" ADD CONSTRAINT "Twitter_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "TaskState" ADD CONSTRAINT "TaskState_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

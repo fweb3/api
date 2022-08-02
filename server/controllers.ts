@@ -17,7 +17,7 @@ export const userController = async (req: Request, res: Response) => {
   try {
     const payload = await verifyGetOrCreateUser(req.body)
     res.status(200).json({
-      status: 'success',
+      status: 'ok',
       ...payload,
     })
   } catch (err) {
@@ -48,7 +48,7 @@ export const faucetController = async (req: Request, res: Response) => {
   try {
     const receipt = await requestDripFromFaucet(req.body)
     res.status(200).json({
-      status: 'success',
+      status: 'ok',
       transaction_hash: receipt?.transactionHash,
       raw_receipt: receipt,
     })

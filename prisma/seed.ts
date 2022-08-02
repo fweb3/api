@@ -18,12 +18,6 @@ const SEED_USERS = [
     ens: 'rimraf.eth',
   },
   {
-    account: 'polygon:0x65eaFA1FBA16E3D85Ea9e663794e4F6e123C4B8A',
-    email: 'ryan@sudormrf.me',
-    role: Role.ADMIN,
-    ens: 'foo.eth',
-  },
-  {
     account: 'polygon:0xeFA27c8CD1b31B3ACc72ba814ff8B16258f837F9',
     email: 'faucet-test1@me.me',
     role: Role.PLAYER,

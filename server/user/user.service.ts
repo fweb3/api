@@ -1,3 +1,4 @@
+import { calculateGameState } from './../game/tasks'
 import { IUserVerifyRequest } from './user.d'
 import { getUser, createUser } from './user.entity'
 
@@ -12,21 +13,25 @@ const _netAccount = ({ network, account }: IUserVerifyRequest) => {
 }
 
 export async function verifyGetOrCreateUser(incomingBody: IUserVerifyRequest) {
-  const { network, account, ipinfo } = incomingBody
+  const { network, account, clientInfo } = incomingBody
   _verifyNetworkOrThrow(network.toString())
   const userRecord = await getUser(_netAccount(incomingBody))
   if (userRecord) {
     return {
       created: false,
       ...userRecord,
+      taskState: await calculateGameState(network, account),
     }
   }
   const networkAccount = `${network}:${account}`
   const newUser = await createUser({
     account: networkAccount,
+    ip: clientInfo.ip,
+    clientInfo: JSON.stringify(clientInfo),
     ipinfo: {
       create: {
-        ...ipinfo,
+        ip: clientInfo.ip,
+        userAgent: clientInfo.userAgent,
       },
     },
   })
