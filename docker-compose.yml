@@ -10,4 +10,7 @@ services:
       - POSTGRES_DB=fweb3_dev
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
-      - ./pgdata/development:/var/lib/postgresql/data/pgdata
+      - fweb3_dev:/var/lib/postgresql/data/pgdata
+
+volumes:
+  fweb3_dev:

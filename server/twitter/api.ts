@@ -1,4 +1,5 @@
 const { TWITTER_BEARER_TOKEN } = process.env
+
 const TWITTER_API_URL = 'https://api.twitter.com/2'
 
 function _createOpts() {

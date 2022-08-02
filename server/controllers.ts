@@ -11,16 +11,21 @@ import {
   requestDripFromFaucet,
 } from './faucet'
 
-import { verifyTwitter } from './twitter'
+import { verifyGetOrCreateUser } from './user'
 
-export const twitterController = async (req: Request, res: Response) => {
+export const userController = async (req: Request, res: Response) => {
   try {
-    const { username } = req.query
-    const payload = await verifyTwitter(username.toString())
-    res.status(200).json(payload)
+    const payload = await verifyGetOrCreateUser(req.body)
+    res.status(200).json({
+      status: 'success',
+      ...payload,
+    })
   } catch (err) {
     console.error(err)
-    res.status(500).json(err.message)
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    })
   }
 }
 
@@ -32,7 +37,10 @@ export const gameController = async (req: Request, res: Response) => {
     res.status(200).json(payload)
   } catch (err) {
     console.error(err)
-    res.status(500).json(err.message)
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    })
   }
 }
 
@@ -41,7 +49,6 @@ export const faucetController = async (req: Request, res: Response) => {
     const receipt = await requestDripFromFaucet(req.body)
     res.status(200).json({
       status: 'success',
-      message: 'ok',
       transaction_hash: receipt?.transactionHash,
       raw_receipt: receipt,
     })

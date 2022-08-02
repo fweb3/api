@@ -11,8 +11,26 @@ CREATE TABLE "User" (
     "discord" TEXT,
     "ens" TEXT,
     "role" "Role" NOT NULL DEFAULT 'PLAYER',
+    "active" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "IpInfo" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "ip" TEXT,
+    "hostname" TEXT,
+    "country" TEXT,
+    "city" TEXT,
+    "region" TEXT,
+    "loc" TEXT,
+    "org" TEXT,
+    "postal" TEXT,
+    "timezone" TEXT,
+
+    CONSTRAINT "IpInfo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -63,6 +81,9 @@ CREATE UNIQUE INDEX "User_discord_key" ON "User"("discord");
 CREATE UNIQUE INDEX "User_ens_key" ON "User"("ens");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "IpInfo_userId_key" ON "IpInfo"("userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Twitter_userId_key" ON "Twitter"("userId");
 
 -- CreateIndex
@@ -76,6 +97,9 @@ CREATE UNIQUE INDEX "Twitter_username_key" ON "Twitter"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TaskState_userId_key" ON "TaskState"("userId");
+
+-- AddForeignKey
+ALTER TABLE "IpInfo" ADD CONSTRAINT "IpInfo_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Twitter" ADD CONSTRAINT "Twitter_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

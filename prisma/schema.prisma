@@ -18,6 +18,23 @@ model User {
   ens           String?     @unique
   role          Role        @default(PLAYER)
   taskState     TaskState?
+  active        Boolean     @default(true)
+  ipinfo        IpInfo?
+}
+
+model IpInfo {
+  id            String      @default(uuid()) @id
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @unique
+  ip            String?
+  hostname      String?
+  country       String?
+  city          String?
+  region        String?
+  loc           String?
+  org           String?
+  postal        String?
+  timezone      String?
 }
 
 model Twitter {

@@ -9,7 +9,7 @@ import {
   faucetStateController,
   gameController,
   awardController,
-  twitterController,
+  userController,
 } from './controllers'
 
 export const routes = (app) => {
@@ -25,10 +25,10 @@ export const routes = (app) => {
   app.post('/bots/discord/commands', discordPostCommands)
   app.delete('/bots/discord/commands', discordDeleteCommands)
 
-  app.get('/api/twitter', twitterController)
   app.get('/api/game', gameController)
   app.post('/api/game', awardController)
   app.post('/api/faucet', faucetController)
+  app.post('/api/user', userController)
   app.get('/api/faucet', faucetStateController)
   app.get('/api/balances', balanceController)
 }
