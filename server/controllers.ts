@@ -12,6 +12,23 @@ import {
 } from './faucet'
 
 import { verifyGetOrCreateUser } from './user'
+import { verifyUsersTwitter } from './twitter'
+
+export const twitterController = async (req: Request, res: Response) => {
+  try {
+    const payload = await verifyUsersTwitter(req.body)
+    res.status(200).json({
+      status: 'ok',
+      ...payload,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    })
+  }
+}
 
 export const userController = async (req: Request, res: Response) => {
   try {

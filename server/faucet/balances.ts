@@ -17,7 +17,7 @@ export const fetchBalances = async (network: string, address: string) => {
     if (!address) {
       return fetchFaucetBalances(fweb3Interfaces)
     } else {
-      return _fetchAccountBalances(fweb3Interfaces, address)
+      return fetchAccountBalances(fweb3Interfaces, address)
     }
   } catch (err) {
     console.error(err)
@@ -65,7 +65,7 @@ export const fetchFweb3Faucetbalance = async ({
   }
 }
 
-const _fetchAccountBalances = async (
+export const fetchAccountBalances = async (
   { provider, fweb3Token }: IFweb3Interfaces,
   address: string
 ) => {

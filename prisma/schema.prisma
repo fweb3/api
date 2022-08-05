@@ -21,6 +21,8 @@ model User {
   active        Boolean     @default(true)
   ipinfo        IpInfo?
   clientInfo    String?
+  verifyHash    String?
+  verifySalt    String?
 }
 
 model IpInfo {

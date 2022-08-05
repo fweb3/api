@@ -23,12 +23,12 @@ export interface IUser {
   updatedAt: Date
   account: string
   email?: string
-  twitter: ITwitterData
+  twitter?: ITwitterData
   discord?: string
   ens?: string
   role: Role
   active: boolean
-  ipinfo: IIpInfo
+  ipinfo?: IIpInfo
 }
 
 export interface IGameTaskState {

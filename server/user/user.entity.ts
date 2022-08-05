@@ -3,15 +3,14 @@ import { IUser } from './user.d'
 
 export async function getUser(account: string): Promise<IUser> {
   try {
-    return prisma.user.findUnique({
-      where: { account },
-      include: {
-        ipinfo: true,
-        twitter: true,
+    const data = await prisma.user.findUnique({
+      where: {
+        account,
       },
     })
+    return data
   } catch (err) {
-    console.error(err)
+    console.error('ERROR:::::::', err.message)
     return null
   }
 }
@@ -20,7 +19,7 @@ export async function createUser(data) {
   try {
     return prisma.user.create({ data })
   } catch (err) {
-    console.error(err)
+    console.error(err.message)
     return null
   }
 }

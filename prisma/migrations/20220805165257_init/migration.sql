@@ -4,6 +4,7 @@ CREATE TYPE "Role" AS ENUM ('PLAYER', 'ADMIN', 'ROOT');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
+    "ip" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "account" TEXT NOT NULL,
@@ -13,6 +14,8 @@ CREATE TABLE "User" (
     "role" "Role" NOT NULL DEFAULT 'PLAYER',
     "active" BOOLEAN NOT NULL DEFAULT true,
     "clientInfo" TEXT,
+    "verifyHash" TEXT,
+    "verifySalt" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

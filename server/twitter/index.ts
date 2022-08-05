@@ -1,1 +1,1 @@
-export { verifyTwitter } from './service'
+export { verifyUsersTwitter } from './twitter.service'
