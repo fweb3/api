@@ -12,6 +12,7 @@ interface IVerifyTwitterRequest {
   twitterHandle: string
 }
 
+
 export async function verifyUsersTwitter({
   network,
   account,

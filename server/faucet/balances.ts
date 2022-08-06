@@ -69,7 +69,7 @@ export const fetchAccountBalances = async (
   { provider, fweb3Token }: IFweb3Interfaces,
   address: string
 ) => {
-  console.log(`[-] Fetching account balances for: [${address}]`)
+  console.debug(`[+] Fetching account balances for: [${address}]`)
   const accountBalance = await provider.getBalance(address)
   const tokenBalance = await fweb3Token.balanceOf(address)
   return {

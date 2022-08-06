@@ -7,6 +7,10 @@ export async function getUser(account: string): Promise<IUser> {
       where: {
         account,
       },
+      include: {
+        ipinfo: true,
+        twitter: true,
+      },
     })
     return data
   } catch (err) {
@@ -22,4 +26,22 @@ export async function createUser(data) {
     console.error(err.message)
     return null
   }
+}
+
+export async function findInBlacklist(ip = '') {
+  try {
+    return prisma.blackList.findUnique({ where: { ip } })
+  } catch (err) {
+    console.error(err.message)
+    return null
+  }
+}
+
+export async function createBlacklist(account: string, ip: string) {
+  return prisma.blackList.create({
+    data: {
+      account,
+      ip,
+    },
+  })
 }

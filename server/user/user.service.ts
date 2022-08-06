@@ -1,9 +1,9 @@
-import { checkBlacklist } from './../faucet/validate';
 import { calculateGameState } from './../game/tasks'
-import { IGameTaskState, IUser, IUserVerifyRequest } from './user.d'
+import { checkBlacklist } from './../faucet/validate';
 import { getUser, createUser } from './user.entity'
-import CryptoJS from 'crypto-js'
 import { hasTokens, hasUsedAFaucetBefore } from '../faucet'
+import { IGameTaskState, IUser, IUserVerifyRequest } from './user.d'
+import CryptoJS from 'crypto-js'
 
 export enum AllowedNetworks {
   POLYGON,
@@ -29,7 +29,7 @@ export async function verifyGetOrCreateUser(
   const netAccount = _netAccount(incomingBody)
   const userRecord = await getUser(netAccount)
   if (userRecord) {
-    console.debug('[+] Found user:', userRecord.account.substring(0, 7))
+    console.debug('[+] Found user:', userRecord.account.substring(0, 15))
     const userPayload = {
       created: false,
       ...userRecord,
@@ -48,7 +48,6 @@ export async function verifyGetOrCreateUser(
     clientInfo: JSON.stringify(clientInfo),
     verifySalt,
     verifyHash: _createVerificationHash(networkAccount, verifySalt),
-    notAllowedReasons: [],
     ipinfo: {
       create: {
         ip: clientInfo.ip,
@@ -57,7 +56,7 @@ export async function verifyGetOrCreateUser(
     },
   })
   console.debug('[+] Created new user:', newUser.account.substring(0, 15))
-  return { created: true, ...newUser }
+  return { created: true, ...newUser, notAllowedReasons: [] }
 }
 
 export const FAUCET_RULES = {
@@ -75,27 +74,28 @@ async function _checkCanUseFaucet(
   if (!user) {
     return []
   }
-  const errors = []
+  const violations = []
   const accountAddress = user.account.split(':')[1]
   const { hasFweb3, hasMatic } = await hasTokens(network, accountAddress)
   if (hasFweb3) {
-    errors.push(FAUCET_RULES.HAS_TOKENS)
+    violations.push(FAUCET_RULES.HAS_TOKENS)
   }
   if (hasMatic) {
-    errors.push(FAUCET_RULES.HAS_MATIC)
+    violations.push(FAUCET_RULES.HAS_MATIC)
   }
   const { fweb3, matic } = await hasUsedAFaucetBefore(accountAddress)
   if (fweb3) {
-    errors.push(FAUCET_RULES.HAS_USED_FWEB3_FAUCET)
+    violations.push(FAUCET_RULES.HAS_USED_FWEB3_FAUCET)
   }
   if (matic) {
-    errors.push(FAUCET_RULES.HAS_USED_MATIC_FAUCET)
+    violations.push(FAUCET_RULES.HAS_USED_MATIC_FAUCET)
   }
   const blackListed = await checkBlacklist(user.ipinfo?.ip)
   if (blackListed) {
-    errors.push(FAUCET_RULES.IS_BLACKLISTED)
+    violations.push(FAUCET_RULES.IS_BLACKLISTED)
   }
-  return errors
+  console.debug(`[+] violations found: ${JSON.stringify(violations)}`)
+  return violations
 }
 
 function _createVerificationHash(str: string, salt: string) {
