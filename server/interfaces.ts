@@ -84,9 +84,15 @@ export const getFweb3Interfaces = async (
 
 const _getProvider = (network: string): Provider => {
   if (network === 'polygon' || network === 'original') {
+    if (!ALCHEMY_MAINNET_API_KEY) {
+      throw new Error('Missing polygon alchemy key!')
+    }
     log.debug(`[+] using mainnet provider`)
     return new AlchemyProvider('matic', ALCHEMY_MAINNET_API_KEY)
   } else if (network === 'mumbai') {
+    if (!ALCHEMY_TESTNET_API_KEY) {
+      throw new Error('Missing mumbai alchemy key!')
+    }
     log.debug(`[+] using mumbai alchemy provider`)
     return new AlchemyProvider('maticmum', ALCHEMY_TESTNET_API_KEY)
   } else {
@@ -97,14 +103,17 @@ const _getProvider = (network: string): Provider => {
 
 const _getPrivk = (network: string): string => {
   if (network === 'polygon') {
+    if (!POLYGON_PRIVK) throw new Error('missing polygon priv key')
     log.debug('[+] using polygon wallet')
-    return POLYGON_PRIVK || ''
+    return POLYGON_PRIVK
   } else if (network === 'mumbai') {
+    if (!MUMBAI_PRIVK) throw new Error('missing mumbai priv key')
     log.debug('[+] using mumbai wallet')
-    return MUMBAI_PRIVK || ''
+    return MUMBAI_PRIVK
   } else {
+    if (!LOCAL_PRIVK) throw new Error('missing local priv key')
     log.debug('[+] using local wallet')
-    return LOCAL_PRIVK || ''
+    return LOCAL_PRIVK
   }
 }
 

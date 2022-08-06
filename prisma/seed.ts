@@ -17,12 +17,6 @@ const SEED_USERS = [
     role: Role.ROOT,
     ens: 'rimraf.eth',
   },
-  {
-    account: 'polygon:0xeFA27c8CD1b31B3ACc72ba814ff8B16258f837F9',
-    email: 'faucet-test1@me.me',
-    role: Role.PLAYER,
-    ens: 'bar.eth',
-  },
 ]
 
 ;(async () => {

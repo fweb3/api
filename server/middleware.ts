@@ -6,7 +6,8 @@ import express, { Express, NextFunction, Request, Response } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 
-const { API_TOKENS, ALLOWED_HOSTS } = process.env
+const { API_TOKENS = 'foobar', ALLOWED_HOSTS = 'http://localhost' } =
+  process.env
 
 export function verifyDiscordRequest(clientKey) {
   return function (req, res, buf) {
