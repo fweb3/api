@@ -7,7 +7,7 @@ export interface IUserVerifyRequest {
 }
 
 export interface IIpinfoResponse {
-  ip: string
+  account: string
   hostname: string
   city: string
   country: string
@@ -18,17 +18,49 @@ export interface IIpinfoResponse {
 }
 
 export interface IUser {
-  id: string
+  account: string
   createdAt: Date
   updatedAt: Date
-  account: string
   email?: string
-  twitter?: ITwitterData
+  twitter?: IUserTwitterData
   discord?: string
   ens?: string
   role: Role
   active: boolean
-  ipinfo?: IIpInfo
+  ipinfo?: IUserIpInfo
+}
+
+export interface IUserTwitterData {
+  account?: string
+  profileImageUrl?: string
+  name?: string
+  twitterId?: string
+  username?: string
+  followersCount?: number
+  followingCount?: number
+  tweetCount?: number
+  location?: string
+  twitterCreatedAt?: Date
+}
+
+export interface IUserIpInfo {
+  account: string
+  userId?: string
+  ip?: string
+  hostname?: string
+  country?: string
+  city?: string
+  region?: string
+  loc?: string
+  org?: string
+  postal?: string
+  timezone?: string
+}
+
+declare const UserRole: {
+  PLAYER: 'PLAYER'
+  ADMIN: 'ADMIN'
+  ROOT: 'ROOT'
 }
 
 export interface IGameTaskState {
@@ -44,38 +76,4 @@ export interface IGameTaskState {
   trophyId?: string
 }
 
-export interface ITwitterData {
-  id?: string
-  userId?: string
-  profileImageUrl?: string
-  name?: string
-  twitterId?: string
-  username?: string
-  followersCount?: number
-  followingCount?: number
-  tweetCount?: number
-  location?: string
-  twitterCreatedAt?: Date
-}
-
-export interface IIpInfo {
-  id?: string
-  userId?: string
-  ip?: string
-  hostname?: string
-  country?: string
-  city?: string
-  region?: string
-  loc?: string
-  org?: string
-  postal?: string
-  timezone?: string
-}
-
-declare const Role: {
-  PLAYER: 'PLAYER'
-  ADMIN: 'ADMIN'
-  ROOT: 'ROOT'
-}
-
-export type Role = typeof Role[keyof typeof Role]
+export type Role = typeof UserRole[keyof typeof UserRole]

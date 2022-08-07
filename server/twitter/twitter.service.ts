@@ -1,5 +1,5 @@
-import { createTwitterRecordForUser, getUser } from '../user/user.entity'
 import { fetchTwitterUserData } from './twitter.api'
+import { upsertUserTwitterRecord, getUser } from '../user/user.entity'
 import { validateTwitter } from './twitter.validation'
 
 interface IVerifyTwitterRequest {
@@ -18,22 +18,25 @@ export async function verifyUsersTwitter({
   if (!userRecord) {
     console.debug('[-] user record not found for twitter verification')
     return {
-      status: 'ok',
-      allowed: false,
+      status: 'error',
+      message: 'No account found to verify twitter against',
     }
   }
   const twitterUserData = await fetchTwitterUserData(twitterHandle.toString())
-  console.debug(`[+] fetched twitter data: ${twitterUserData}`)
-  const newUserWithTwitter = await createTwitterRecordForUser(
+  console.debug(`[+] fetched twitter data!`)
+  const updatedUserRecord = await upsertUserTwitterRecord(
     netAccount,
     twitterUserData
   )
   console.debug(
-    `[+] created new twitter record for: ${newUserWithTwitter.twitter.name}`
+    `[+] created new twitter record: ${JSON.stringify(
+      updatedUserRecord.twitter
+    )}`
   )
-  const invalidRules = validateTwitter(newUserWithTwitter.twitter)
+  const ruleViolations = await validateTwitter(updatedUserRecord)
+  console.debug(`[+] twitter rule violations ${JSON.stringify(ruleViolations)}`)
   return {
     status: 'ok',
-    invalidRules,
+    ruleViolations,
   }
 }

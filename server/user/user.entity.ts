@@ -1,7 +1,4 @@
-import {
-  ITwitterUsernameData,
-  IUserTwitterData,
-} from './../twitter/twitter.api'
+import { IUserTwitterData } from '../user/user.d'
 import { prisma } from '../../prisma'
 import { IUser } from './user.d'
 
@@ -50,7 +47,7 @@ export async function createBlacklist(account: string, ip: string) {
   })
 }
 
-export async function createTwitterRecordForUser(
+export async function upsertUserTwitterRecord(
   account: string,
   data: IUserTwitterData
 ) {
@@ -58,13 +55,17 @@ export async function createTwitterRecordForUser(
     where: { account },
     data: {
       twitter: {
-        create: {
-          ...data,
+        upsert: {
+          create: {
+            ...data,
+          },
+          update: {
+            ...data,
+          },
         },
       },
     },
     include: {
-      ipinfo: true,
       twitter: true,
     },
   })

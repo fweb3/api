@@ -1,24 +1,9 @@
-import { TWITTER_USER_BY_NAME_RESPONSE } from './__mocks__/twitter.fixtures'
+import { IUserTwitterData } from '../user/user.d'
+// import { TWITTER_USER_BY_NAME_RESPONSE } from './__mocks__/twitter.fixtures'
+import fetch from 'node-fetch'
 
 const { TWITTER_BEARER_TOKEN } = process.env
 const TWITTER_API_URL = 'https://api.twitter.com/2'
-
-// ata: {
-//     profile_image_url:
-//       'https://pbs.twimg.com/profile_images/1285001002387558400/ordEOmMd_normal.jpg',
-//     name: 'rimraf.eth',
-//     username: 'hussybitch',
-//     id: '46763557',
-//     public_metrics: {
-//       followers_count: 28,
-//       following_count: 274,
-//       tweet_count: 303,
-//       listed_count: 3,
-//     },
-//     verified: false,
-//     location: 'Grants Pass, OR',
-//     created_at: '2009-06-12T22:22:49.000Z',
-//   },
 
 export interface ITwitterUsernameData {
   profile_image_url: string
@@ -36,28 +21,20 @@ export interface ITwitterUsernameData {
   created_at: string
 }
 
-export interface IUserTwitterData {
-  profileImageUrl?: string
-  name?: string
-  twitterId?: string
-  username?: string
-  followersCount?: number
-  followingCount?: number
-  tweetCount?: number
-  location?: string
-  twitterCreatedAt?: Date
-}
-
-interface ITwitterUserByUsernameRes {
-  data?: ITwitterUsernameData
-}
-
-function _createTwitterConfig() {
-  return {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${TWITTER_BEARER_TOKEN}`,
-    },
+async function fetchTwitter(url: string) {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${TWITTER_BEARER_TOKEN}`,
+      },
+    }
+    const res = await fetch(url, config)
+    const { data } = await res.json()
+    return data
+  } catch (err) {
+    console.error(err)
+    return null
   }
 }
 
@@ -65,21 +42,39 @@ export async function fetchTwitterUserData(
   username: string
 ): Promise<IUserTwitterData> {
   try {
-    const url = `${TWITTER_API_URL}/users/by/username/${username}`
-    const opts = _createTwitterConfig()
-    const res = await fetch(url, opts)
-    const data = await res.json()
-    // return _sanitizeTwitterUsernameResponse(data)
-    return _sanitizeTwitterUsernameResponse(TWITTER_USER_BY_NAME_RESPONSE)
+    const url = `${TWITTER_API_URL}/users/by/username/${username}?user.fields=created_at,verified,location,name,profile_image_url,public_metrics`
+    const data = await fetchTwitter(url)
+    if (!data?.id) return null
+    const formatted = _sanitizeTwitterUsernameResponse(data)
+    return formatted
   } catch (err) {
     console.error(err)
     return null
   }
 }
 
-function _sanitizeTwitterUsernameResponse({
-  data,
-}: ITwitterUserByUsernameRes): IUserTwitterData {
+export interface ITwitterTweets {
+  id: string
+  text: string
+}
+
+export async function fetchUsersTweets(
+  id: string,
+  startFrom: Date
+): Promise<ITwitterTweets[]> {
+  const url = `${TWITTER_API_URL}/users/${id}/tweets?start_time=${startFrom.toJSON()}`
+  const tweets = await fetchTwitter(url)
+  console.debug(
+    `[+] fetched users tweets since ${startFrom.toJSON()} found: [${
+      tweets?.length || 0
+    }]`
+  )
+  return tweets
+}
+
+function _sanitizeTwitterUsernameResponse(
+  data: ITwitterUsernameData
+): IUserTwitterData {
   return {
     profileImageUrl: data.profile_image_url,
     name: data.name,

@@ -8,11 +8,10 @@ generator client {
 }
 
 model User {
-  id         String   @id @default(uuid())
+  account    String   @id @unique
   ip         String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  account    String   @unique
   email      String?  @unique
   twitter    Twitter?
   discord    String?  @unique
@@ -21,14 +20,12 @@ model User {
   active     Boolean  @default(true)
   ipinfo     IpInfo?
   clientInfo String?
-  verifyHash String?
-  verifySalt String?
 }
 
 model IpInfo {
   id        String  @id @default(uuid())
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String  @unique
+  user      User    @relation(fields: [account], references: [account], onDelete: Cascade)
+  account   String  @unique
   ip        String?
   hostname  String?
   country   String?
@@ -43,8 +40,8 @@ model IpInfo {
 
 model Twitter {
   id               String    @id @default(uuid())
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           String    @unique
+  user             User      @relation(fields: [account], references: [account], onDelete: Cascade)
+  account          String    @unique
   profileImageUrl  String?
   name             String?   @unique
   twitterId        String?   @unique

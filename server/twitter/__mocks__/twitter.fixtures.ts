@@ -1,5 +1,19 @@
 // https://api.twitter.com/2/users/by/username/:username?user.fields=created_at,verified,location,name,profile_image_url,public_metrics
 
+export const TWITTER_TWEETS_BY_ID = {
+  data: [
+    {
+      id: '1556330648272453632',
+      text: 'Test #fweb3faucet',
+    },
+  ],
+  meta: {
+    result_count: 1,
+    newest_id: '1556330648272453632',
+    oldest_id: '1556330648272453632',
+  },
+}
+
 export const TWITTER_USER_BY_NAME_RESPONSE = {
   data: {
     profile_image_url:
