@@ -3,7 +3,7 @@ const prisma = new PrismaClient()
 
 class UserService {
   static async all() {
-    return prisma.user.findMany({ include: { taskState: true } })
+    return prisma.user.findMany()
   }
 
   static async create(account) {
@@ -16,9 +16,6 @@ class UserService {
     return prisma.user.findUnique({
       where: {
         account,
-      },
-      include: {
-        taskState: true,
       },
     })
   }
