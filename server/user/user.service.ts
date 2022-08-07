@@ -43,7 +43,7 @@ export async function verifyGetOrCreateUser(
   const networkAccount = `${network}:${account}`
   const verifySalt = CryptoJS.lib.WordArray.random(128 / 8).toString()
   const newUser = await createUser({
-    account: networkAccount,
+    account: networkAccount.toLowerCase(),
     ip: clientInfo.ip,
     clientInfo: JSON.stringify(clientInfo),
     verifySalt,

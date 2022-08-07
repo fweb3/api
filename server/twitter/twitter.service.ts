@@ -1,17 +1,12 @@
-import { getUser } from '../user/user.entity'
-// import { fetchUserIdFromName } from './twitter.api'
-
-// twitter rules
-// age > 3mo
-// public_metrics.tweet_count >= 3
-// public_metrics.following_count >= 5
+import { createTwitterRecordForUser, getUser } from '../user/user.entity'
+import { fetchTwitterUserData } from './twitter.api'
+import { validateTwitter } from './twitter.validation'
 
 interface IVerifyTwitterRequest {
   network: string
   account: string
   twitterHandle: string
 }
-
 
 export async function verifyUsersTwitter({
   network,
@@ -21,15 +16,24 @@ export async function verifyUsersTwitter({
   const netAccount = `${network.toLowerCase()}:${account.toLowerCase()}`
   const userRecord = await getUser(netAccount)
   if (!userRecord) {
-    console.info('USER RECORD NOT FOUND FOR TWITTER VERIFICATION')
+    console.debug('[-] user record not found for twitter verification')
     return {
       status: 'ok',
       allowed: false,
     }
   }
-  // const { data } = await fetchUserIdFromName(twitterHandle.toString())
+  const twitterUserData = await fetchTwitterUserData(twitterHandle.toString())
+  console.debug(`[+] fetched twitter data: ${twitterUserData}`)
+  const newUserWithTwitter = await createTwitterRecordForUser(
+    netAccount,
+    twitterUserData
+  )
+  console.debug(
+    `[+] created new twitter record for: ${newUserWithTwitter.twitter.name}`
+  )
+  const invalidRules = validateTwitter(newUserWithTwitter.twitter)
   return {
     status: 'ok',
-    tweet: twitterHandle,
+    invalidRules,
   }
 }

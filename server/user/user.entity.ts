@@ -1,3 +1,7 @@
+import {
+  ITwitterUsernameData,
+  IUserTwitterData,
+} from './../twitter/twitter.api'
 import { prisma } from '../../prisma'
 import { IUser } from './user.d'
 
@@ -5,7 +9,7 @@ export async function getUser(account: string): Promise<IUser> {
   try {
     const data = await prisma.user.findUnique({
       where: {
-        account,
+        account: account.toLowerCase(),
       },
       include: {
         ipinfo: true,
@@ -14,7 +18,7 @@ export async function getUser(account: string): Promise<IUser> {
     })
     return data
   } catch (err) {
-    console.error('ERROR:::::::', err.message)
+    console.error(err.message)
     return null
   }
 }
@@ -42,6 +46,26 @@ export async function createBlacklist(account: string, ip: string) {
     data: {
       account,
       ip,
+    },
+  })
+}
+
+export async function createTwitterRecordForUser(
+  account: string,
+  data: IUserTwitterData
+) {
+  return prisma.user.update({
+    where: { account },
+    data: {
+      twitter: {
+        create: {
+          ...data,
+        },
+      },
+    },
+    include: {
+      ipinfo: true,
+      twitter: true,
     },
   })
 }
