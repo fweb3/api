@@ -28,7 +28,7 @@
     "lint": "eslint .",
     "pretty": "prettier --check .",
     "pretty:fix": "prettier -w .",
-    "start": "node ./dist/app.js",
+    "start": "node ./dist/server/app.js",
     "dev": "nodemon -r dotenv/config server/app.ts",
     "test": "jest",
     "test:ci": "jest",
