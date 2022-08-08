@@ -8,41 +8,25 @@ generator client {
 }
 
 model User {
-  account    String   @id @unique
-  ip         String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  email      String?  @unique
-  twitter    Twitter?
-  discord    String?  @unique
-  ens        String?  @unique
-  role       Role     @default(PLAYER)
-  active     Boolean  @default(true)
-  ipinfo     IpInfo?
-  clientInfo String?
-}
-
-model IpInfo {
-  id        String  @id @default(uuid())
-  user      User    @relation(fields: [account], references: [account], onDelete: Cascade)
-  account   String  @unique
-  ip        String?
-  hostname  String?
-  country   String?
-  city      String?
-  region    String?
-  loc       String?
-  org       String?
-  postal    String?
-  timezone  String?
-  userAgent String?
+  account            String    @id @unique
+  ip                 String?
+  createdAt          DateTime? @default(now())
+  updatedAt          DateTime? @updatedAt
+  twitter            Twitter?
+  role               Role?     @default(PLAYER)
+  active             Boolean?  @default(true)
+  clientInfo         String?
+  hasReceivedCode    Boolean?  @default(false)
+  fweb3AttempedAt    DateTime?
+  fweb3FaucetSuccess Boolean?  @default(false)
+  maticAttemptedAt   DateTime?
+  maticFaucetSuccess Boolean?  @default(false)
 }
 
 model Twitter {
   id               String    @id @default(uuid())
   user             User      @relation(fields: [account], references: [account], onDelete: Cascade)
   account          String    @unique
-  profileImageUrl  String?
   name             String?   @unique
   twitterId        String?   @unique
   username         String?   @unique
@@ -59,10 +43,19 @@ enum Role {
   ROOT
 }
 
-model BlackList {
-  id      String  @id @default(uuid())
-  ip      String  @unique
+model Blacklist {
+  id      String          @id @default(uuid())
+  ip      String          @unique
   account String?
+  reason  BlacklistReason @default(BLACKLIST_UNKNOWN)
 
   @@index([ip], type: Hash)
+}
+
+enum BlacklistReason {
+  BLACKLIST_UNKNOWN
+  BLACKLIST_SPAMMING
+  BLACKLIST_BAD_VERIFY_ATTEMPT
+  BLACKLIST_IP_BLOCK
+  BLACKLIST_ACCOUNT_BLOCK
 }

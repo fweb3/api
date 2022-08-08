@@ -1,4 +1,4 @@
-import { IGameTaskState } from './../user/user.d'
+import { GameTaskState } from './../game/game.d'
 import { ethers } from 'ethers'
 import type { IPolygonResult } from '../polygonscan/types'
 import { loadAddresses } from '../contracts/addresses'
@@ -13,7 +13,7 @@ import { DEFAULT_STATE } from './states'
 export const calculateGameState = async (
   network: string,
   account: string
-): Promise<IGameTaskState> => {
+): Promise<GameTaskState> => {
   const normalTxRelatedState = await normalTxRelated(network, account)
   const internalRelatedState = await internalTxRelated(network, account)
   const erc20TransferRelatedState = await erc20TransferRelated(network, account)

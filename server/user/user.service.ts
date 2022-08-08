@@ -1,7 +1,7 @@
 import { calculateGameState } from './../game/tasks'
 import { getUser, createUser } from './user.entity'
-import { IUserVerifyRequest } from './user.d'
 import { IClientPayload } from '../index.d'
+import { IUserVerifyRequest } from './user.d'
 import { validateUserFaucetRules } from './user.validators'
 
 export enum AllowedNetworks {
@@ -36,16 +36,11 @@ export async function verifyGetOrCreateUser(
     }
   }
   const networkAccount = `${network}:${account}`
+
   const newUser = await createUser({
     account: networkAccount.toLowerCase(),
-    ip: clientInfo.ip,
+    ip: clientInfo.ip as string,
     clientInfo: JSON.stringify(clientInfo),
-    ipinfo: {
-      create: {
-        ip: clientInfo.ip,
-        userAgent: clientInfo.userAgent,
-      },
-    },
   })
   console.debug('[+] Created new user:', newUser.account.substring(0, 15))
   return { status: 'ok', created: true, ...newUser, ruleViolations: [] }

@@ -1,38 +1,28 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('PLAYER', 'ADMIN', 'ROOT');
 
+-- CreateEnum
+CREATE TYPE "BlacklistReason" AS ENUM ('BLACKLIST_UNKNOWN', 'BLACKLIST_SPAMMING', 'BLACKLIST_BAD_VERIFY_ATTEMPT', 'BLACKLIST_IP_BLOCK', 'BLACKLIST_ACCOUNT_BLOCK');
+
 -- CreateTable
 CREATE TABLE "User" (
     "account" TEXT NOT NULL,
     "ip" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3),
     "email" TEXT,
     "discord" TEXT,
     "ens" TEXT,
-    "role" "Role" NOT NULL DEFAULT 'PLAYER',
-    "active" BOOLEAN NOT NULL DEFAULT true,
+    "role" "Role" DEFAULT 'PLAYER',
+    "active" BOOLEAN DEFAULT true,
     "clientInfo" TEXT,
+    "hasReceivedCode" BOOLEAN DEFAULT false,
+    "fweb3AttempedAt" TIMESTAMP(3),
+    "fweb3FaucetSuccess" BOOLEAN DEFAULT false,
+    "maticAttemptedAt" TIMESTAMP(3),
+    "maticFaucetSuccess" BOOLEAN DEFAULT false,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("account")
-);
-
--- CreateTable
-CREATE TABLE "IpInfo" (
-    "id" TEXT NOT NULL,
-    "account" TEXT NOT NULL,
-    "ip" TEXT,
-    "hostname" TEXT,
-    "country" TEXT,
-    "city" TEXT,
-    "region" TEXT,
-    "loc" TEXT,
-    "org" TEXT,
-    "postal" TEXT,
-    "timezone" TEXT,
-    "userAgent" TEXT,
-
-    CONSTRAINT "IpInfo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -53,12 +43,13 @@ CREATE TABLE "Twitter" (
 );
 
 -- CreateTable
-CREATE TABLE "BlackList" (
+CREATE TABLE "Blacklist" (
     "id" TEXT NOT NULL,
     "ip" TEXT NOT NULL,
     "account" TEXT,
+    "reason" "BlacklistReason" NOT NULL DEFAULT 'BLACKLIST_UNKNOWN',
 
-    CONSTRAINT "BlackList_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Blacklist_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -74,9 +65,6 @@ CREATE UNIQUE INDEX "User_discord_key" ON "User"("discord");
 CREATE UNIQUE INDEX "User_ens_key" ON "User"("ens");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "IpInfo_account_key" ON "IpInfo"("account");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Twitter_account_key" ON "Twitter"("account");
 
 -- CreateIndex
@@ -89,13 +77,10 @@ CREATE UNIQUE INDEX "Twitter_twitterId_key" ON "Twitter"("twitterId");
 CREATE UNIQUE INDEX "Twitter_username_key" ON "Twitter"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "BlackList_ip_key" ON "BlackList"("ip");
+CREATE UNIQUE INDEX "Blacklist_ip_key" ON "Blacklist"("ip");
 
 -- CreateIndex
-CREATE INDEX "BlackList_ip_idx" ON "BlackList" USING HASH ("ip");
-
--- AddForeignKey
-ALTER TABLE "IpInfo" ADD CONSTRAINT "IpInfo_account_fkey" FOREIGN KEY ("account") REFERENCES "User"("account") ON DELETE CASCADE ON UPDATE CASCADE;
+CREATE INDEX "Blacklist_ip_idx" ON "Blacklist" USING HASH ("ip");
 
 -- AddForeignKey
 ALTER TABLE "Twitter" ADD CONSTRAINT "Twitter_account_fkey" FOREIGN KEY ("account") REFERENCES "User"("account") ON DELETE CASCADE ON UPDATE CASCADE;

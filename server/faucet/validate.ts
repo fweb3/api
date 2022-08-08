@@ -1,7 +1,6 @@
 import { fetchAccountBalances } from './balances'
 import { getFweb3Interfaces } from './../interfaces'
 import { fetchNormalTransactions } from '../polygonscan'
-import { findInBlacklist } from '../user/user.entity'
 
 const FWEB3_FAUCETS = [
   '0x82dB7fe5Cd26804E29534A7f648B780c313BC317', // fweb3
@@ -16,11 +15,6 @@ const MATIC_FAUCETS = [
   '0x351050Ac0AdC9bff0622c1c0525b3322C328517f', // matic
   '0xF2d86AEe11351D4396eE2Bd663977C91eE2b0F9b', // matic
 ]
-
-export const checkBlacklist = async (ip: string): Promise<boolean> => {
-  const found = await findInBlacklist(ip)
-  return found ? true : false
-}
 
 export const hasTokens = async (network: string, account: string) => {
   const interfaces = await getFweb3Interfaces(network)

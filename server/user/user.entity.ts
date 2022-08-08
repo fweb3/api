@@ -1,15 +1,15 @@
-import { IUserTwitterData } from '../user/user.d'
 import { prisma } from '../../prisma'
-import { IUser } from './user.d'
+import { Twitter, User, Prisma } from '@prisma/client'
 
-export async function getUser(account: string): Promise<IUser> {
+export async function getUser(
+  account: string
+): Promise<User & { twitter: Twitter }> {
   try {
     const data = await prisma.user.findUnique({
       where: {
         account: account.toLowerCase(),
       },
       include: {
-        ipinfo: true,
         twitter: true,
       },
     })
@@ -20,7 +20,7 @@ export async function getUser(account: string): Promise<IUser> {
   }
 }
 
-export async function createUser(data) {
+export async function createUser(data: Prisma.UserCreateInput): Promise<User> {
   try {
     return prisma.user.create({ data })
   } catch (err) {
@@ -29,28 +29,23 @@ export async function createUser(data) {
   }
 }
 
-export async function findInBlacklist(ip = '') {
+export async function updateUser(account: string, user: User) {
   try {
-    return prisma.blackList.findUnique({ where: { ip } })
+    return prisma.user.update({
+      where: {
+        account,
+      },
+      data: {
+        ...user,
+      },
+    })
   } catch (err) {
-    console.error(err.message)
+    console.error(err)
     return null
   }
 }
 
-export async function createBlacklist(account: string, ip: string) {
-  return prisma.blackList.create({
-    data: {
-      account,
-      ip,
-    },
-  })
-}
-
-export async function upsertUserTwitterRecord(
-  account: string,
-  data: IUserTwitterData
-) {
+export async function upsertUserTwitterRecord(account: string, data: Twitter) {
   return prisma.user.update({
     where: { account },
     data: {

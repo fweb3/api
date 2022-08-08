@@ -1,12 +1,11 @@
-import { IUserTwitterData } from '../user/user.d'
 // import { TWITTER_USER_BY_NAME_RESPONSE } from './__mocks__/twitter.fixtures'
 import fetch from 'node-fetch'
+import { Twitter } from '@prisma/client'
 
 const { TWITTER_BEARER_TOKEN } = process.env
 const TWITTER_API_URL = 'https://api.twitter.com/2'
 
-export interface ITwitterUsernameData {
-  profile_image_url: string
+export interface TwitterByUserResponse {
   name: string
   username: string
   id: string
@@ -38,11 +37,11 @@ async function fetchTwitter(url: string) {
   }
 }
 
-export async function fetchTwitterUserData(
+export async function fetchTwitterDataByUsername(
   username: string
-): Promise<IUserTwitterData> {
+): Promise<Twitter> {
   try {
-    const url = `${TWITTER_API_URL}/users/by/username/${username}?user.fields=created_at,verified,location,name,profile_image_url,public_metrics`
+    const url = `${TWITTER_API_URL}/users/by/username/${username}?user.fields=created_at,verified,location,name,public_metrics`
     const data = await fetchTwitter(url)
     if (!data?.id) return null
     const formatted = _sanitizeTwitterUsernameResponse(data)
@@ -60,12 +59,13 @@ export interface ITwitterTweets {
 
 export async function fetchUsersTweets(
   id: string,
-  startFrom: Date
+  fromTime = null
 ): Promise<ITwitterTweets[]> {
-  const url = `${TWITTER_API_URL}/users/${id}/tweets?start_time=${startFrom.toJSON()}`
+  const time = fromTime ?? new Date(Date.now() - 1000 * 60 * 60)
+  const url = `${TWITTER_API_URL}/users/${id}/tweets?start_time=${time.toJSON()}`
   const tweets = await fetchTwitter(url)
   console.debug(
-    `[+] fetched users tweets since ${startFrom.toJSON()} found: [${
+    `[+] fetched users tweets since ${time.toJSON()} found: [${
       tweets?.length || 0
     }]`
   )
@@ -73,10 +73,11 @@ export async function fetchUsersTweets(
 }
 
 function _sanitizeTwitterUsernameResponse(
-  data: ITwitterUsernameData
-): IUserTwitterData {
+  data: TwitterByUserResponse
+): Twitter {
   return {
-    profileImageUrl: data.profile_image_url,
+    id: null,
+    account: null,
     name: data.name,
     twitterId: data.id,
     username: data.username,

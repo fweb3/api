@@ -1,6 +1,7 @@
-import { fetchTwitterUserData } from './twitter.api'
+import { fetchTwitterDataByUsername } from './twitter.api'
 import { upsertUserTwitterRecord, getUser } from '../user/user.entity'
 import { validateTwitter } from './twitter.validation'
+import CryptoJS from 'crypto-js'
 
 interface IVerifyTwitterRequest {
   network: string
@@ -19,10 +20,18 @@ export async function verifyUsersTwitter({
     console.debug('[-] user record not found for twitter verification')
     return {
       status: 'error',
-      message: 'No account found to verify twitter against',
+      message: 'USER_NOT_FOUND',
     }
   }
-  const twitterUserData = await fetchTwitterUserData(twitterHandle.toString())
+  // check blacklist
+
+  if (userRecord?.twitter?.twitterId) {
+    // have twitter, time to verify
+    console.log('have twitter records')
+  }
+  const twitterUserData = await fetchTwitterDataByUsername(
+    twitterHandle.toString()
+  )
   console.debug(`[+] fetched twitter data!`)
   const updatedUserRecord = await upsertUserTwitterRecord(
     netAccount,
@@ -33,10 +42,14 @@ export async function verifyUsersTwitter({
       updatedUserRecord.twitter
     )}`
   )
-  const ruleViolations = await validateTwitter(updatedUserRecord)
+  const ruleViolations = await validateTwitter(updatedUserRecord.twitter)
   console.debug(`[+] twitter rule violations ${JSON.stringify(ruleViolations)}`)
   return {
     status: 'ok',
     ruleViolations,
   }
+}
+
+export function generatePPKDF2(str: string, salt: string) {
+  return CryptoJS.PBKDF2(str, salt, { keySize: 256 / 32 }).toString()
 }

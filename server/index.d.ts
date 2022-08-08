@@ -1,15 +1,15 @@
-import { IUser, IGameTaskState } from './user/user.d'
+import { User } from '@prisma/client'
+import { GameTaskState } from './game/game.d'
 
 declare module '*.json' {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const value: any
+  const value: unknown
   export default value
 }
 
-export interface IClientPayload extends IUser {
+export interface IClientPayload extends User {
   status: string
   message?: string
   created?: boolean
-  taskState?: IGameTaskState
+  taskState?: GameTaskState
   ruleViolations?: string[]
 }

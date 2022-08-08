@@ -1,8 +1,8 @@
+import { Twitter } from '@prisma/client'
 import { fetchUsersTweets, ITwitterTweets } from './twitter.api'
-import { IUser } from './../user/user.d'
-import CryptoJS from 'crypto-js'
+import { generatePPKDF2 } from './twitter.service'
 
-const VALIDITY_HASH = '#fweb3faucet'
+const VALIDITY_HASHTAG = '#fweb3faucet'
 const TWITTER_MIN_AGE_DAYS = 90
 const TWITTER_MIN_TWEETS = 3
 const TWITTER_MIN_FOLLOWING = 3
@@ -17,14 +17,21 @@ export const TWITTER_RULES = {
   NO_VALID_TWEETS: 'NO_VALID_TWEETS',
 }
 
-export async function validateTwitter(userRecord?: IUser): Promise<string[]> {
+export async function validateTwitter(
+  twitterRecord: Twitter
+): Promise<string[]> {
   const violations = []
-  const { twitter: twitterData } = userRecord
-  if (!twitterData?.username) {
+  const {
+    twitterCreatedAt,
+    followersCount,
+    followingCount,
+    tweetCount,
+    username,
+  } = twitterRecord
+
+  if (!username) {
     return [TWITTER_RULES.NO_ACCOUNT]
   }
-  const { twitterCreatedAt, followersCount, followingCount, tweetCount } =
-    twitterData
 
   const accountOldEnough =
     _calcAgeFromDate(twitterCreatedAt) >= TWITTER_MIN_AGE_DAYS
@@ -49,13 +56,8 @@ export async function validateTwitter(userRecord?: IUser): Promise<string[]> {
   }
 
   // only fetch tweets and validate if they're clear so far
-  if (violations.length !== 0) {
-    const anHourAgo = new Date(Date.now() - 1000 * 60 * 60)
-    const accountTweets = await fetchUsersTweets(
-      twitterData.twitterId,
-      anHourAgo
-    )
-    const hasValidTweet = _hasValidTweet(userRecord.account, accountTweets)
+  if (violations.length === 0) {
+    const hasValidTweet = await fetchAndCheckTweets(twitterRecord)
 
     if (!hasValidTweet) {
       violations.push(TWITTER_RULES.NO_VALID_TWEETS)
@@ -73,15 +75,29 @@ function _calcAgeFromDate(date: Date): number {
   return age
 }
 
-function _createPbkdf2(str: string, salt: string) {
-  return CryptoJS.PBKDF2(str, salt, { keySize: 256 / 32 }).toString()
+export async function fetchAndCheckTweets(twitterRecord: Twitter) {
+  const tweetsFromLastHour = await fetchUsersTweets(twitterRecord.twitterId)
+  return checkHasValidTweet(twitterRecord.account, tweetsFromLastHour)
 }
 
-function _hasValidTweet(netAccount: string, accountTweets: ITwitterTweets[]) {
-  const hash = _createPbkdf2(netAccount, process.env.TWITTER_VERIFY_SALT)
-  return (
+export function checkHasValidTweet(
+  netAccount: string,
+  accountTweets: ITwitterTweets[]
+) {
+  if (!accountTweets) return false
+  const hash = generatePPKDF2(netAccount, process.env.TWITTER_VERIFY_SALT)
+  const hasValidTweet =
     accountTweets?.filter(({ text }) => {
-      return text.includes(`${VALIDITY_HASH} ${hash}`)
+      return text.includes(`${VALIDITY_HASHTAG} ${hash}`)
     }).length !== 0
-  )
+  if (hasValidTweet) return hasValidTweet
+
+  const atteptedBadTweet = accountTweets.filter(({ text }) => {
+    return text.match(/\w{64}+$/)
+  })
+
+  if (atteptedBadTweet) {
+    // create blacklist
+  }
+  return false
 }
