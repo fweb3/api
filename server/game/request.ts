@@ -18,7 +18,7 @@ export const confirmAndAwardWinner = async ({
     }
   }
   return {
-    status: 'success',
+    status: 'ok',
     token_id: 'here is the id',
     opensea_link: 'should send link?',
   }

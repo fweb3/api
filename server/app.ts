@@ -16,7 +16,7 @@ const { PORT = 3001 } = process.env
 
     app.listen(PORT, () => {
       console.log(`⚡️[server]: Server is listening on [${PORT}]`)
-      console.log(`🔥 version: [v1.1]`)
+      console.log(`🔥 version: [v1.2]`)
       // initializeBotCommands()
     })
   } catch (err) {

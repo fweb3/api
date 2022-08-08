@@ -11,6 +11,41 @@ import {
   requestDripFromFaucet,
 } from './faucet'
 
+import { verifyGetOrCreateUser } from './user'
+import { verifyUsersTwitter } from './twitter'
+
+export const twitterController = async (req: Request, res: Response) => {
+  try {
+    const payload = await verifyUsersTwitter(req.body)
+    res.status(200).json({
+      status: 'ok',
+      ...payload,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    })
+  }
+}
+
+export const userController = async (req: Request, res: Response) => {
+  try {
+    const payload = await verifyGetOrCreateUser(req.body)
+    res.status(200).json({
+      status: 'ok',
+      ...payload,
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    })
+  }
+}
+
 export const gameController = async (req: Request, res: Response) => {
   try {
     const { network, account } = req.query
@@ -19,7 +54,10 @@ export const gameController = async (req: Request, res: Response) => {
     res.status(200).json(payload)
   } catch (err) {
     console.error(err)
-    res.status(500).json(err.message)
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+    })
   }
 }
 
@@ -27,8 +65,7 @@ export const faucetController = async (req: Request, res: Response) => {
   try {
     const receipt = await requestDripFromFaucet(req.body)
     res.status(200).json({
-      status: 'success',
-      message: 'ok',
+      status: 'ok',
       transaction_hash: receipt?.transactionHash,
       raw_receipt: receipt,
     })

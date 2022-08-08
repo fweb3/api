@@ -1,3 +1,5 @@
+import { fetchAccountBalances } from './balances'
+import { getFweb3Interfaces } from './../interfaces'
 import { fetchNormalTransactions } from '../polygonscan'
 
 const FWEB3_FAUCETS = [
@@ -13,6 +15,19 @@ const MATIC_FAUCETS = [
   '0x351050Ac0AdC9bff0622c1c0525b3322C328517f', // matic
   '0xF2d86AEe11351D4396eE2Bd663977C91eE2b0F9b', // matic
 ]
+
+export const hasTokens = async (network: string, account: string) => {
+  const interfaces = await getFweb3Interfaces(network)
+  const { fweb3_balance, matic_balance } = await fetchAccountBalances(
+    interfaces,
+    account
+  )
+
+  return {
+    hasFweb3: parseFloat(fweb3_balance) > 0,
+    hasMatic: parseFloat(matic_balance) > 0,
+  }
+}
 
 export const hasUsedAFaucetBefore = async (account: string) => {
   const ADMIN = [

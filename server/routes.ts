@@ -9,6 +9,8 @@ import {
   faucetStateController,
   gameController,
   awardController,
+  userController,
+  twitterController,
 } from './controllers'
 
 export const routes = (app) => {
@@ -27,6 +29,8 @@ export const routes = (app) => {
   app.get('/api/game', gameController)
   app.post('/api/game', awardController)
   app.post('/api/faucet', faucetController)
+  app.post('/api/user', userController)
+  app.post('/api/twitter', twitterController)
   app.get('/api/faucet', faucetStateController)
   app.get('/api/balances', balanceController)
 }

@@ -1,5 +1,6 @@
 export * from '../errors/faucetErrors'
 export * from './faucetStates'
+export * from './validate'
 export * from './balances'
 export * from './disable'
 export * from './request'
